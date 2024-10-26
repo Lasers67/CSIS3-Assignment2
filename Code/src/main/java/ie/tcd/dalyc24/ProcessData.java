@@ -151,7 +151,7 @@ public class ProcessData
     }
     public static void main(String[] args) throws IOException
     {
-	ArrayList<Document> d = readFiles_Cran_Dataset_File("../Data/latimes/la123190");
+	ArrayList<Document> d = readFiles_Dataset_File("../Data/latimes/la123190");
 	for (Document doc : d) {
             System.out.println("Document ID: " + doc.get("documentID"));
             System.out.println("Headline: " + doc.get("headline"));
