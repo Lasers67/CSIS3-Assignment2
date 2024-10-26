@@ -43,7 +43,17 @@ public class ProcessData
                 if (line.startsWith("<DOCNO>")) {
                     documentID = line.replace("<DOCNO>", "").replace("</DOCNO>", "").trim();
                 } else if (line.startsWith("<HEADLINE>")) {
-                    headline = reader.readLine().trim();
+                    StringBuilder headlineBuilder = new StringBuilder();
+                    boolean inHeadline = true;
+                    while (inHeadline && (line = reader.readLine()) != null) {
+                        line = line.trim();
+                        if (line.startsWith("</HEADLINE>")) {
+                            inHeadline = false;
+                        } else {
+                            headlineBuilder.append(line.replace("<P>", "").replace("</P>", "")).append(" ");
+                        }
+                    }
+                    headline = headlineBuilder.toString().trim();
                 } else if (line.startsWith("<TEXT>")) {
                     StringBuilder textBuilder = new StringBuilder();
                     inText = true;
@@ -52,7 +62,7 @@ public class ProcessData
                         if (line.startsWith("</TEXT>")) {
                             inText = false;
                         } else {
-                            textBuilder.append(line).append(" ");
+                            textBuilder.append(line.replace("<P>", "").replace("</P>", "")).append(" ");
                         }
                     }
                     text = textBuilder.toString().trim();
@@ -141,7 +151,7 @@ public class ProcessData
     }
     public static void main(String[] args) throws IOException
     {
-	ArrayList<Document> d = readFiles_Dataset_File("../Data/latimes/la123190");
+	ArrayList<Document> d = readFiles_Cran_Dataset_File("../Data/latimes/la123190");
 	for (Document doc : d) {
             System.out.println("Document ID: " + doc.get("documentID"));
             System.out.println("Headline: " + doc.get("headline"));
