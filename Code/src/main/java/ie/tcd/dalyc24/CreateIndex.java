@@ -91,11 +91,11 @@ public class CreateIndex
     public static void main(String[] args) throws IOException
     {
 	//read the files and create list of documents
-	ProcessData proc = new ProcessData();
-	ArrayList<Document> list_of_documents = proc.readFiles_Cran_Dataset();
+	//ProcessData proc = new ProcessData();
+	//ArrayList<Document> list_of_documents = proc.readFiles_Cran_Dataset();
 	//delete the previous directory
-	deleteprevDir();
+	//deleteprevDir();
 	//create Index
-	createCranIndex(args[0],list_of_documents);
+	//createCranIndex(args[0],list_of_documents);
     }
 }
