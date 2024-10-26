@@ -26,83 +26,56 @@ public class ProcessData
 {
     
     // Directories
-    private static String DATA_DIRECTORY = "../cran.all.1400";
+    private static String DATA_DIRECTORY = "../Data/";
+	private static String[] DATA_FOLDERS = ["latimes/","ft/","fr94/","fbis/"];
     private static String QUERY_DIRECTORY = "../cran.qry";
-    public static ArrayList<Document> readFiles_Cran_Dataset()
-    {
-	ArrayList<Document> documents_cran = new ArrayList<Document>();
-        BufferedReader reader;
-	String current_head="";
-	String index = "";
-	String text = "";
-	String title = "";
-	String author = "";
-	int counter = 0;
-	try{
-		reader = new BufferedReader(new FileReader(DATA_DIRECTORY));
-		String line = reader.readLine();
-		while(line!=null)
-		{
-			String words[] = line.split("\\s+");
-			switch(words[0])
-			{
-				case ".I":
-					//if the first word is .I it means second word is index
-					if(counter>0)
-					{
-						//create document if not the 1st line
-						Document document = new Document();
-                				document.add(new StringField("id", index, Field.Store.YES));
-                				document.add(new TextField("title", title, Field.Store.YES));
-                				document.add(new TextField("author", author, Field.Store.YES));
-                				document.add(new TextField("text", text, Field.Store.YES));
-                				documents_cran.add(document);
-						index = "";
-						text = "";
-						title = "";
-						author = "";
-					}
-					index = words[1];
-					break;
-				case ".T":
-				case ".A":
-				case ".W":
-				case ".B":
-					//for all others, change head
-					current_head = words[0];
-					break;
-				default:
-					switch(current_head)
-					{
-						case ".T":
-							title=title + line + " ";
-						       break;
-						case ".A":
-							author= author + line + " ";
-					 		break;
-						case ".W":
-							text = text + line + " ";
-					}		
-			}
-			counter++;
-			line = reader.readLine();
-		}
-		//create document for the last set
-		Document document = new Document();
-        	document.add(new StringField("id", index, Field.Store.YES));
-        	document.add(new TextField("title", title, Field.Store.YES));
-        	document.add(new TextField("authors", author, Field.Store.YES));
-        	document.add(new TextField("text", text, Field.Store.YES));
-		documents_cran.add(document);
-		reader.close();
+    public static ArrayList<Document> readFiles_Dataset_File(String filePath) {
+        ArrayList<Document> documents = new ArrayList<>();
 
-	}
-	catch (IOException e)
-	{
-		e.printStackTrace();
-		System.exit(1);
-	}
-	return documents_cran;
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            String documentID = null, headline = null, text = null;
+            boolean inText = false;
+
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+
+                if (line.startsWith("<DOCNO>")) {
+                    documentID = line.replace("<DOCNO>", "").replace("</DOCNO>", "").trim();
+                } else if (line.startsWith("<HEADLINE>")) {
+                    headline = reader.readLine().trim();
+                } else if (line.startsWith("<TEXT>")) {
+                    StringBuilder textBuilder = new StringBuilder();
+                    inText = true;
+                    while (inText && (line = reader.readLine()) != null) {
+                        line = line.trim();
+                        if (line.startsWith("</TEXT>")) {
+                            inText = false;
+                        } else {
+                            textBuilder.append(line).append(" ");
+                        }
+                    }
+                    text = textBuilder.toString().trim();
+                } else if (line.startsWith("</DOC>")) {
+                    Document doc = new Document();
+                    if (documentID != null) {
+                        doc.add(new StringField("documentID", documentID, Field.Store.YES));
+                    }
+                    if (headline != null) {
+                        doc.add(new StringField("headline", headline, Field.Store.YES));
+                    }
+                    if (text != null) {
+                        doc.add(new TextField("text", text, Field.Store.YES));
+                    }
+                    documents.add(doc);
+                    documentID = headline = text = null;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return documents;
     }
     //function to read the query's after pre processing
     public static List<Map<String, String>> readcran_queries()
@@ -168,8 +141,13 @@ public class ProcessData
     }
     public static void main(String[] args) throws IOException
     {
-	ArrayList<Document> d = readFiles_Cran_Dataset();
-	List<Map<String,String>> cranQueries = readcran_queries();
+	ArrayList<Document> d = readFiles_Cran_Dataset_File("../Data/latimes/la123190");
+	for (Document doc : d) {
+            System.out.println("Document ID: " + doc.get("documentID"));
+            System.out.println("Headline: " + doc.get("headline"));
+            System.out.println("Text: " + doc.get("text"));
+            System.out.println();
+        }
 	System.out.println("Run Data Pre-processing");
     }
 }
