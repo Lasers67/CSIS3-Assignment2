@@ -129,11 +129,10 @@ public class LuceneSearch {
 			{
 				Map<String,String> query_collection = queryList.get(i);
 				MultiFieldQueryParser queryParser = new MultiFieldQueryParser(
-                        	new String[]{"title","author", "text"},
+                        	new String[]{"title","narrative", "description"},
                         	analyzer);
 				//add query's with ? as first letter
-				queryParser.setAllowLeadingWildcard(true);
-				Query query = queryParser.parse(query_collection.get("text"));
+				Query query = queryParser.parse(query_collection.get("description"));
 				ScoreDoc[] hits = isearcher.search(query, 1000).scoreDocs;
 				for(int j=0;j<hits.length;j++)
 				{
