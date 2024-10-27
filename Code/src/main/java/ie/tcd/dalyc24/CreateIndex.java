@@ -58,7 +58,7 @@ public class CreateIndex
 				break;
 		}
 
-		String[] DATA_FOLDERS = {"latimes/"};
+		String[] DATA_FOLDERS = {"latimes/", "ft/", "fr94/", "fbis/"};
 		try{
 		Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
