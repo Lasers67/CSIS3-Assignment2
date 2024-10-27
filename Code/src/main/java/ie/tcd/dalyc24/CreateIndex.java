@@ -59,7 +59,6 @@ public class CreateIndex
 		}
 
 		String[] DATA_FOLDERS = {"latimes/", "ft/", "fr94/", "fbis/"};
-
 		// Iterate over each data folder and process files
 		for (String folder : DATA_FOLDERS) {
 			File directory = new File("../Data/" + folder);
@@ -70,6 +69,7 @@ public class CreateIndex
 						if (file.isFile()) {
 							if (!file.getName().equals("readchg.txt") && !file.getName().equals("readmela.txt")) {
 								try {
+									System.out.println("Directory:- " + folder + " file:- " + file.getName());
 									// Create a new index for each file
 									Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY + "/index_" + file.getName()));
 									IndexWriterConfig config = new IndexWriterConfig(analyzer);
@@ -95,6 +95,7 @@ public class CreateIndex
 									for (File nestedFile : nestedFiles) {
 										if (nestedFile.isFile()) {
 											try {
+												System.out.println("Directory:- " + folder + " file:- " + nestedFile.getAbsolutePath());
 									// Create a new index for each file
 									Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY + "/index_" + file.getName()));
 									IndexWriterConfig config = new IndexWriterConfig(analyzer);
