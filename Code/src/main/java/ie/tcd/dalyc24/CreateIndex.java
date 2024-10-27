@@ -59,6 +59,7 @@ public class CreateIndex
 		}
 
 		String[] DATA_FOLDERS = {"latimes/"};
+		try{
 		Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND); // Always create a new index
@@ -115,6 +116,11 @@ public class CreateIndex
 		}
 		iwriter.close(); // Close the writer
 		indexDirectory.close(); // Close the directory
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
     public static void deleteprevDir() {
     try {
