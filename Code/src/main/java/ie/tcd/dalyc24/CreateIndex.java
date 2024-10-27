@@ -58,7 +58,11 @@ public class CreateIndex
 				break;
 		}
 
-		String[] DATA_FOLDERS = {"latimes/", "ft/", "fr94/", "fbis/"};
+		String[] DATA_FOLDERS = {"latimes/"};
+		Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
+		IndexWriterConfig config = new IndexWriterConfig(analyzer);
+		config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND); // Always create a new index
+		IndexWriter iwriter = new IndexWriter(indexDirectory, config);
 		// Iterate over each data folder and process files
 		for (String folder : DATA_FOLDERS) {
 			File directory = new File("../Data/" + folder);
@@ -70,20 +74,11 @@ public class CreateIndex
 							if (!file.getName().startsWith("read")) {
 								try {
 									System.out.println("Directory:- " + folder + " file:- " + file.getName());
-									// Create a new index for each file
-									Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
-									IndexWriterConfig config = new IndexWriterConfig(analyzer);
-									config.setOpenMode(IndexWriterConfig.OpenMode.CREATE); // Always create a new index
-									IndexWriter iwriter = new IndexWriter(indexDirectory, config);
-
 									// Read the document from the file and add it to the index
 									ArrayList<Document> documents = proc.readFiles_Dataset_File(file.getAbsolutePath());
 									for (Document doc : documents) {
 										iwriter.addDocument(doc);
 									}
-
-									iwriter.close(); // Close the writer
-									indexDirectory.close(); // Close the directory
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
@@ -97,19 +92,12 @@ public class CreateIndex
 											try {
 												System.out.println("Directory:- " + folder + " file:- " + nestedFile.getAbsolutePath());
 									// Create a new index for each file
-									Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
-									IndexWriterConfig config = new IndexWriterConfig(analyzer);
-									config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND); // Always create a new index
-									IndexWriter iwriter = new IndexWriter(indexDirectory, config);
 
 									// Read the document from the file and add it to the index
 									ArrayList<Document> documents = proc.readFiles_Dataset_File(nestedFile.getAbsolutePath());
 									for (Document doc : documents) {
 										iwriter.addDocument(doc);
 									}
-
-									iwriter.close(); // Close the writer
-									indexDirectory.close(); // Close the directory
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
@@ -124,6 +112,8 @@ public class CreateIndex
 			} else {
 				System.out.println("The specified path is not a directory: " + folder);
 			}
+			iwriter.close(); // Close the writer
+			indexDirectory.close(); // Close the directory
 		}
 	}
     public static void deleteprevDir() {
