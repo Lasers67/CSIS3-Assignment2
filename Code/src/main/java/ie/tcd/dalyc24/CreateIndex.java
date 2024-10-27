@@ -67,7 +67,7 @@ public class CreateIndex
 				if (files != null && files.length > 0) {
 					for (File file : files) {
 						if (file.isFile()) {
-							if (!file.getName().equals("readchg.txt") && !file.getName().equals("readmela.txt")) {
+							if (!file.getName().startsWith("read")) {
 								try {
 									System.out.println("Directory:- " + folder + " file:- " + file.getName());
 									// Create a new index for each file
