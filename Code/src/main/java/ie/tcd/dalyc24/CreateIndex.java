@@ -142,6 +142,6 @@ public class CreateIndex
 	//delete the previous directory
 	deleteprevDir();
 	//create Index
-	createIndexForEachFile(args[0],list_of_documents);
+	createIndexForEachFile(args[0]);
     }
 }
