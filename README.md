@@ -13,3 +13,6 @@ To Add Data run following:-
 Running Code:-
 mvn package
 java -jar target/example1-1.2-processdata.jar 
+
+To Download Queries File:- 
+gdown https://drive.google.com/uc?id=1CaCtA2RHhW4DP--5HyHnKm9jjqyWvc99

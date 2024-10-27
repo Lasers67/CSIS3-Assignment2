@@ -28,7 +28,7 @@ public class ProcessData
     
     // Directories
     private static String DATA_DIRECTORY = "../Data/";
-    private static String QUERY_DIRECTORY = "../cran.qry";
+    private static String QUERY_DIRECTORY = "../topics";
     public static ArrayList<Document> readFiles_Dataset_File(String filePath) {
         ArrayList<Document> documents = new ArrayList<>();
 
@@ -106,66 +106,69 @@ public class ProcessData
         return documents;
     }
     //function to read the query's after pre processing
-    public static List<Map<String, String>> readcran_queries()
-    {
-	List<Map<String, String>> cranQueryList = new ArrayList<Map<String, String>>();
-	BufferedReader reader;
-        String current_head="";
+    public static List<Map<String, String>> readQueries() {
+        List<Map<String, String>> queryList = new ArrayList<>();
+        BufferedReader reader;
+        String currentHead = "";
         String index = "";
-        String text = "";
-	int queryNumber = 0;
-	int counter = 0;
-	try{
-		//Initialize the reader
-		reader = new BufferedReader(new FileReader(QUERY_DIRECTORY));
-                String line = reader.readLine();
-		Map<String,String> SingleQuery = new HashMap<String,String>();
-                while(line!=null)
-		{
-			String words[] = line.split("\\s+");
-                        switch(words[0])
-			{
-				case ".I":
-					//if 1st word is .I it means index
-					if(counter>0)
-                                        {
-						SingleQuery.put("id",index);
-						SingleQuery.put("query_no",String.valueOf(++queryNumber));
-						SingleQuery.put("text",text);
-						cranQueryList.add(SingleQuery);
-						SingleQuery = new HashMap<String,String>();
-                                                index = "";
-                                                text = "";
-                                        }
-                                        index = words[1];
-					break;
-				case ".W":
-					current_head = words[0];
-					break;
-				default:
-					switch(current_head)
-                                        {
-                                                case ".W":
-                                                        text = text + line + " ";
-                                        }
-					break;
-			}
-			counter++;
-			line = reader.readLine();
-		}
-		//also append query number
-                SingleQuery.put("id",index);
-                SingleQuery.put("query_no",String.valueOf(++queryNumber));
-                SingleQuery.put("text",text);
-                cranQueryList.add(SingleQuery);
+        String title = "";
+        String description = "";
+        String narrative = "";
+        int queryNumber = 0;
 
-	}
-	catch(IOException e)
-	{
-		e.printStackTrace();
-		System.exit(1);
-	}
-	return cranQueryList;
+        try {
+            // Initialize the reader
+            reader = new BufferedReader(new FileReader(QUERY_DIRECTORY));
+            String line;
+            Map<String, String> singleQuery = new HashMap<>();
+
+            while ((line = reader.readLine()) != null) {
+                String trimmedLine = line.trim();
+                
+                if (trimmedLine.isEmpty()) continue; // Skip empty lines
+
+                // Check the first word of the line
+                if (trimmedLine.startsWith("<num>")) {
+                    index = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
+                } else if (trimmedLine.startsWith("<title>")) {
+                    title = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
+                } else if (trimmedLine.startsWith("<desc>")) {
+                    description = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
+                } else if (trimmedLine.startsWith("<narr>")) {
+                    narrative = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
+                } else if (trimmedLine.startsWith("</top>")) {
+                    // When we reach the end of a query, store it in the list
+                    singleQuery.put("id", index);
+                    singleQuery.put("query_no", String.valueOf(++queryNumber));
+                    singleQuery.put("title", title);
+                    singleQuery.put("description", description);
+                    singleQuery.put("narrative", narrative);
+                    queryList.add(singleQuery);
+
+                    // Reset for the next query
+                    singleQuery = new HashMap<>();
+                    index = "";
+                    title = "";
+                    description = "";
+                    narrative = "";
+                }
+            }
+
+            // To catch any query not closed properly (if needed)
+            if (!index.isEmpty()) {
+                singleQuery.put("id", index);
+                singleQuery.put("query_no", String.valueOf(++queryNumber));
+                singleQuery.put("title", title);
+                singleQuery.put("description", description);
+                singleQuery.put("narrative", narrative);
+                queryList.add(singleQuery);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return queryList;
     }
     public static void main(String[] args) throws IOException
     {

@@ -59,7 +59,7 @@ import org.apache.lucene.search.similarities.AxiomaticF2LOG;
 public class LuceneSearch {
 	public static void main(String[] args) throws IOException {
         	ProcessData readFile = new ProcessData();
-        	List<Map<String, String>> queryList = readFile.readcran_queries();
+        	List<Map<String, String>> queryList = readFile.readQueries();
         	LuceneSearch searcher = new LuceneSearch();
 		System.out.println(args[0] + " " + args[1]);
         	searcher.searchQueriesInData(args[0], args[1],queryList);
@@ -94,7 +94,7 @@ public class LuceneSearch {
                         		break;
        			}
 			//load indexs
-			Directory directory = FSDirectory.open(Paths.get("./index"));
+			Directory directory = FSDirectory.open(Paths.get("./index/"));
 			DirectoryReader ireader = DirectoryReader.open(directory);
 			IndexSearcher isearcher = new IndexSearcher(ireader);
 			//depending on the sys arg choose similarity score
