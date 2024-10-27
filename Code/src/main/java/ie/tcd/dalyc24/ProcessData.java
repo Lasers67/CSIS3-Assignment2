@@ -108,65 +108,55 @@ public class ProcessData
     //function to read the query's after pre processing
     public static List<Map<String, String>> readQueries() {
         List<Map<String, String>> queryList = new ArrayList<>();
-        BufferedReader reader;
-        String currentHead = "";
-        String index = "";
-        String title = "";
-        String description = "";
-        String narrative = "";
+        String index = "", title = "", description = "", narrative = "";
         int queryNumber = 0;
 
-        try {
-            // Initialize the reader
-            reader = new BufferedReader(new FileReader(QUERY_DIRECTORY));
+        try (BufferedReader reader = new BufferedReader(new FileReader(QUERY_DIRECTORY))) {
             String line;
             Map<String, String> singleQuery = new HashMap<>();
 
             while ((line = reader.readLine()) != null) {
                 String trimmedLine = line.trim();
-                
+
                 if (trimmedLine.isEmpty()) continue; // Skip empty lines
 
-                // Check the first word of the line
-                if (trimmedLine.startsWith("<num>")) {
+                if (trimmedLine.startsWith("<top>")) {
+                    // Initialize a new query map
+                    singleQuery = new HashMap<>();
+                } else if (trimmedLine.startsWith("<num>")) {
                     index = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
                 } else if (trimmedLine.startsWith("<title>")) {
                     title = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
                 } else if (trimmedLine.startsWith("<desc>")) {
-                    description = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
+                    description = ""; // Start fresh for multi-line description
                 } else if (trimmedLine.startsWith("<narr>")) {
-                    narrative = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
+                    narrative = ""; // Start fresh for multi-line narrative
                 } else if (trimmedLine.startsWith("</top>")) {
-                    // When we reach the end of a query, store it in the list
+                    // Store the completed query into the list
                     singleQuery.put("id", index);
                     singleQuery.put("query_no", String.valueOf(++queryNumber));
                     singleQuery.put("title", title);
-                    singleQuery.put("description", description);
-                    singleQuery.put("narrative", narrative);
+                    singleQuery.put("description", description.trim());
+                    singleQuery.put("narrative", narrative.trim());
                     queryList.add(singleQuery);
 
-                    // Reset for the next query
-                    singleQuery = new HashMap<>();
+                    // Reset variables for the next query
                     index = "";
                     title = "";
                     description = "";
                     narrative = "";
+                } else {
+                    // Append to description or narrative if inside respective sections
+                    if (!description.isEmpty() || trimmedLine.startsWith("Description:")) {
+                        description += " " + trimmedLine;
+                    } else if (!narrative.isEmpty() || trimmedLine.startsWith("Narrative:")) {
+                        narrative += " " + trimmedLine;
+                    }
                 }
-            }
-
-            // To catch any query not closed properly (if needed)
-            if (!index.isEmpty()) {
-                singleQuery.put("id", index);
-                singleQuery.put("query_no", String.valueOf(++queryNumber));
-                singleQuery.put("title", title);
-                singleQuery.put("description", description);
-                singleQuery.put("narrative", narrative);
-                queryList.add(singleQuery);
             }
 
         } catch (IOException e) {
             e.printStackTrace();
-            System.exit(1);
         }
         return queryList;
     }
