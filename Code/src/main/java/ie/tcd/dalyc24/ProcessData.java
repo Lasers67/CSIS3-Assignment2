@@ -167,50 +167,8 @@ public class ProcessData
 	}
 	return cranQueryList;
     }
-    public static ArrayList<Document> readFiles_Dataset() {
-        ArrayList<Document> res = new ArrayList<>();
-        String[] DATA_FOLDERS = {"latimes/", "ft/", "fr94/", "fbis/"};
-
-        for (String folder : DATA_FOLDERS) {
-            File directory = new File("../Data/" + folder);
-            if (directory.isDirectory()) {
-                File[] files = directory.listFiles();
-                if (files != null && files.length > 0) {
-                    for (File file : files) {
-                        if (file.isFile()) {
-                            if (!file.getName().equals("readchg.txt") && !file.getName().equals("readmela.txt")) {
-                                res.addAll(readFiles_Dataset_File("../Data/" + folder + file.getName()));
-                            }
-                        } else if (file.isDirectory()) {
-                            // Handle nested directories
-                            File[] nestedFiles = file.listFiles();
-                            if (nestedFiles != null) {
-                                for (File nestedFile : nestedFiles) {
-                                    if (nestedFile.isFile()) {
-                                        res.addAll(readFiles_Dataset_File(nestedFile.getAbsolutePath()));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    System.out.println("The directory " + folder + " is empty.");
-                }
-            } else {
-                System.out.println("The specified path is not a directory: " + folder);
-            }
-        }
-        
-        return res;
-    }
     public static void main(String[] args) throws IOException
     {
-	ArrayList<Document> d = readFiles_Dataset();
-	for (Document doc : d) {
-            System.out.println("Document ID: " + doc.get("documentID"));
-            System.out.println("Headline: " + doc.get("headline"));
-            System.out.println();
-        }
 	System.out.println("Run Data Pre-processing");
     }
 }
