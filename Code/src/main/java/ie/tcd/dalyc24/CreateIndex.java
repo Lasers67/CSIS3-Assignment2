@@ -112,9 +112,9 @@ public class CreateIndex
 			} else {
 				System.out.println("The specified path is not a directory: " + folder);
 			}
-			iwriter.close(); // Close the writer
-			indexDirectory.close(); // Close the directory
 		}
+		iwriter.close(); // Close the writer
+		indexDirectory.close(); // Close the directory
 	}
     public static void deleteprevDir() {
     try {
