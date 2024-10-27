@@ -109,6 +109,8 @@ public class ProcessData
     public static List<Map<String, String>> readQueries() {
         List<Map<String, String>> queryList = new ArrayList<>();
         String index = "", title = "", description = "", narrative = "";
+        int description_start = -1;
+        int narrative_start = -1;
         int queryNumber = 0;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(QUERY_DIRECTORY))) {
@@ -128,9 +130,16 @@ public class ProcessData
                 } else if (trimmedLine.startsWith("<title>")) {
                     title = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
                 } else if (trimmedLine.startsWith("<desc>")) {
+                    description_start = 0;
                     description = ""; // Start fresh for multi-line description
-                } else if (trimmedLine.startsWith("<narr>")) {
+                } else if (trimmedLine.startsWith("</desc>")) {
+                    description_start = -1;
+                } else if (trimmedLine.startsWith("</narr>")) {
+                    narrative_start = -1;
+                } 
+                else if (trimmedLine.startsWith("<narr>")) {
                     narrative = ""; // Start fresh for multi-line narrative
+                    narrative_start = 0;
                 } else if (trimmedLine.startsWith("</top>")) {
                     // Store the completed query into the list
                     singleQuery.put("id", index);
@@ -152,9 +161,9 @@ public class ProcessData
                     narrative = "";
                 } else {
                     // Append to description or narrative if inside respective sections
-                    if (!description.isEmpty() || trimmedLine.startsWith("Description:")) {
+                    if (description_start==0) {
                         description += " " + trimmedLine;
-                    } else if (!narrative.isEmpty() || trimmedLine.startsWith("Narrative:")) {
+                    } else if (narrative_start==0) {
                         narrative += " " + trimmedLine;
                     }
                 }
