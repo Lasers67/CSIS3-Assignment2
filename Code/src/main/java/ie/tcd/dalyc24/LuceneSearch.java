@@ -129,16 +129,17 @@ public class LuceneSearch {
 			for(int i=0;i<queries_to_consider;i++)
 			{
 				Map<String,String> query_collection = queryList.get(i);
-				String queryNo = query_collection.get("query_no");
-    			String description = query_collection.get("description");
-				System.out.println(queryNo + " " + description);
+				//String queryNo = query_collection.get("query_no");
+    			//String description = query_collection.get("description");
+				//System.out.println(queryNo + " " + description);
 				MultiFieldQueryParser queryParser = new MultiFieldQueryParser(
                         	//new String[]{"title","narrative", "description"},
 							new String[]{"headline","text","byLine"},
                         	analyzer);
+				//only using description + narrative for start
 				String d = query_collection.get("description");
 				String escapedDescription = queryParser.escape(d);
-				Query query = queryParser.parse(escapedDescription);
+				Query query = queryParser.parse(escapedDescription + " " + query_collection.get("narrative"));
 				ScoreDoc[] hits = isearcher.search(query, 1000).scoreDocs;
 				for(int j=0;j<hits.length;j++)
 				{
