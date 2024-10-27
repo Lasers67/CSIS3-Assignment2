@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import java.nio.file.Paths;
 import java.io.File;
+import java.util.*;
+import java.util.regex.*;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -109,6 +111,7 @@ public class ProcessData
     public static List<Map<String, String>> readQueries() {
         List<Map<String, String>> queryList = new ArrayList<>();
         String index = "", title = "", description = "", narrative = "";
+        Pattern titlePattern = Pattern.compile("<title>\\s*(.*)");
         int description_start = -1;
         int narrative_start = -1;
         int queryNumber = 0;
@@ -128,7 +131,10 @@ public class ProcessData
                 } else if (trimmedLine.startsWith("<num>")) {
                     index = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
                 } else if (trimmedLine.startsWith("<title>")) {
-                    title = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
+                    Matcher matcher = titlePattern.matcher(line);
+                    if (matcher.find()) {
+                        title = matcher.group(1).trim();
+                    }
                 } else if (trimmedLine.startsWith("<desc>")) {
                     description_start = 0;
                     description = ""; // Start fresh for multi-line description
