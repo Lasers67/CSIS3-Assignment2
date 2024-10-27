@@ -134,8 +134,8 @@ public class LuceneSearch {
 				MultiFieldQueryParser queryParser = new MultiFieldQueryParser(
                         	new String[]{"title","narrative", "description"},
                         	analyzer);
-				String description = query_collection.get("description");
-				String escapedDescription = QueryParser.escape(description);
+				String d = query_collection.get("description");
+				String escapedDescription = QueryParser.escape(d);
 				Query query = queryParser.parse(escapedDescription);
 				ScoreDoc[] hits = isearcher.search(query, 1000).scoreDocs;
 				for(int j=0;j<hits.length;j++)
