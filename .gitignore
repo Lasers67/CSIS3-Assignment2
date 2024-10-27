@@ -25,3 +25,5 @@ replay_pid*
 
 Data/
 topics
+.index/
+Code/index/
