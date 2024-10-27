@@ -71,7 +71,7 @@ public class CreateIndex
 								try {
 									System.out.println("Directory:- " + folder + " file:- " + file.getName());
 									// Create a new index for each file
-									Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY + "/index_" + file.getName()));
+									Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
 									IndexWriterConfig config = new IndexWriterConfig(analyzer);
 									config.setOpenMode(IndexWriterConfig.OpenMode.CREATE); // Always create a new index
 									IndexWriter iwriter = new IndexWriter(indexDirectory, config);
