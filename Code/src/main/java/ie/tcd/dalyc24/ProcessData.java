@@ -138,9 +138,8 @@ public class ProcessData
                 } else if (trimmedLine.startsWith("<desc>")) {
                     description_start = 0;
                     description = ""; // Start fresh for multi-line description
-                } else if (trimmedLine.startsWith("</desc>")) {
-                    description_start = -1;
                 } else if (trimmedLine.startsWith("<narr>")) {
+                    description_start = -1;
                     narrative = ""; // Start fresh for multi-line narrative
                     narrative_start = 0;
                 } else if (trimmedLine.startsWith("</top>")) {
