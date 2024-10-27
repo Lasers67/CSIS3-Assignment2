@@ -131,7 +131,6 @@ public class LuceneSearch {
 				MultiFieldQueryParser queryParser = new MultiFieldQueryParser(
                         	new String[]{"title","narrative", "description"},
                         	analyzer);
-				//add query's with ? as first letter
 				Query query = queryParser.parse(query_collection.get("description"));
 				ScoreDoc[] hits = isearcher.search(query, 1000).scoreDocs;
 				for(int j=0;j<hits.length;j++)

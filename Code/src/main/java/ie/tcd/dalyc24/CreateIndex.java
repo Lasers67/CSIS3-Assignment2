@@ -77,9 +77,7 @@ public class CreateIndex
 									System.out.println("Directory:- " + folder + " file:- " + file.getName());
 									// Read the document from the file and add it to the index
 									ArrayList<Document> documents = proc.readFiles_Dataset_File(file.getAbsolutePath());
-									for (Document doc : documents) {
-										iwriter.addDocument(doc);
-									}
+									iwriter.addDocuments(documents);
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
@@ -96,9 +94,7 @@ public class CreateIndex
 
 									// Read the document from the file and add it to the index
 									ArrayList<Document> documents = proc.readFiles_Dataset_File(nestedFile.getAbsolutePath());
-									for (Document doc : documents) {
-										iwriter.addDocument(doc);
-									}
+									iwriter.addDocuments(documents);
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
