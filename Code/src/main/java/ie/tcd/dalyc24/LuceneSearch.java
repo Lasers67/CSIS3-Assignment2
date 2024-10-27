@@ -139,7 +139,9 @@ public class LuceneSearch {
 				//only using description + narrative for start
 				String d = query_collection.get("description");
 				String escapedDescription = queryParser.escape(d);
-				Query query = queryParser.parse(escapedDescription + " " + query_collection.get("narrative"));
+				String n = query_collection.get("narrative");
+				String escapedNarrative = queryParser.escape(n);
+				Query query = queryParser.parse(escapedDescription + " " + escapedNarrative);
 				ScoreDoc[] hits = isearcher.search(query, 1000).scoreDocs;
 				for(int j=0;j<hits.length;j++)
 				{
