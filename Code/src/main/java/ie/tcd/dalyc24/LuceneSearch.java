@@ -132,7 +132,8 @@ public class LuceneSearch {
     			String description = query_collection.get("description");
 				System.out.println(queryNo + " " + description);
 				MultiFieldQueryParser queryParser = new MultiFieldQueryParser(
-                        	new String[]{"title","narrative", "description"},
+                        	//new String[]{"title","narrative", "description"},
+							new String[]{"headline","text","byLine"},
                         	analyzer);
 				String d = query_collection.get("description");
 				String escapedDescription = queryParser.escape(d);
