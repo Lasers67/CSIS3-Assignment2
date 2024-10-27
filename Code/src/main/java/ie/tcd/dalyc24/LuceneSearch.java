@@ -124,8 +124,9 @@ public class LuceneSearch {
 				default:
 					break;
 			}
+			int queries_to_consider = 25; //queryList.size()
 			List<String> resultsFile = new ArrayList<String>();
-			for(int i=0;i<queryList.size();i++)
+			for(int i=0;i<queries_to_consider;i++)
 			{
 				Map<String,String> query_collection = queryList.get(i);
 				String queryNo = query_collection.get("query_no");
