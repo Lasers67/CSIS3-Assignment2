@@ -8,3 +8,8 @@ To Add Data run following:-
 4. sudo apt-get install unzip
 5. unzip 'Assignment Two.zip' ./Data
 6. mv ./Data <path to repo>
+
+
+Running Code:-
+mvn package
+java -jar target/example1-1.2-processdata.jar 
