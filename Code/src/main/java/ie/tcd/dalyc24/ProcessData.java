@@ -142,7 +142,7 @@ public class ProcessData
                     System.out.println(description);
                     System.out.println(narrative);
                     System.out.println(title);
-                    System.out.println(id);
+                    System.out.println(index);
                     queryList.add(singleQuery);
 
                     // Reset variables for the next query
