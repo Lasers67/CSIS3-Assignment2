@@ -10,9 +10,18 @@ To Add Data run following:-
 6. mv ./Data <path to repo>
 
 
-Running Code:-
-mvn package
-java -jar target/example1-1.2-processdata.jar 
-
 To Download Queries File:- 
-gdown https://drive.google.com/uc?id=1CaCtA2RHhW4DP--5HyHnKm9jjqyWvc99
+1. gdown https://drive.google.com/uc?id=1CaCtA2RHhW4DP--5HyHnKm9jjqyWvc99
+2. mv ./topics <path to repo>
+
+Running Code:-
+1. cd Code/
+2. mvn package
+CREATE INDEX:-
+3. java -jar target/example1-1.2-createindex.jar "english"
+SEARCH and CREATE results.txt file
+4. java -jar target/example1-1.2-lucenesearch.jar "english" "bm25"
+
+Running trec_eval from main repo folder
+1. cd trec_eval-9.0.7
+./trec_eval ../qrels-part1.txt ../Code/results.txt 
