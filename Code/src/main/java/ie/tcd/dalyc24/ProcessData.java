@@ -140,9 +140,6 @@ public class ProcessData
                     description = ""; // Start fresh for multi-line description
                 } else if (trimmedLine.startsWith("</desc>")) {
                     description_start = -1;
-                } else if (trimmedLine.startsWith("</narr>")) {
-                    narrative_start = -1;
-                } 
                 else if (trimmedLine.startsWith("<narr>")) {
                     narrative = ""; // Start fresh for multi-line narrative
                     narrative_start = 0;
@@ -165,6 +162,7 @@ public class ProcessData
                     title = "";
                     description = "";
                     narrative = "";
+                    narrative_start=-1;
                 } else {
                     // Append to description or narrative if inside respective sections
                     if (description_start==0) {
