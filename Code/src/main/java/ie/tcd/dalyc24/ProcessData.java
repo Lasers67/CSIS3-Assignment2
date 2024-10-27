@@ -178,7 +178,7 @@ public class ProcessData
                 for (File file : files) {
                     if (file.isFile()) {
                         if(file.getName()!="readchg.txt" && file.getName()!="readmela.txt")
-                            res.addAll(readFiles_Dataset_File("../Data/latimes/" + file.getName()););
+                            res.addAll(readFiles_Dataset_File("../Data/latimes/" + file.getName()));
                     }
                 }
             } else {
