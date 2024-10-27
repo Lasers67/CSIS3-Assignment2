@@ -92,7 +92,7 @@ public class CreateIndex
     {
 	//read the files and create list of documents
 	ProcessData proc = new ProcessData();
-	ArrayList<Document> list_of_documents = proc.readFiles_Dataset_File();
+	ArrayList<Document> list_of_documents = proc.readFiles_Dataset();
 	//delete the previous directory
 	deleteprevDir();
 	//create Index
