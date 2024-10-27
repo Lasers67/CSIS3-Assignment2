@@ -167,101 +167,48 @@ public class ProcessData
 	}
 	return cranQueryList;
     }
-    public static ArrayList<Document> readFiles_Dataset()
-    {
-        ArrayList<Document> res;
-        String[] DATA_FOLDERS = {"latimes/","ft/","fr94/","fbis/"};
-        //latimes
-        File directory = new File("../Data/latimes/");
-        if (directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            if (files != null && files.length > 0) {
-                for (File file : files) {
-                    if (file.isFile()) {
-                        if(file.getName()!="readchg.txt" && file.getName()!="readmela.txt")
-                            res.addAll(readFiles_Dataset_File("../Data/latimes/" + file.getName()));
-                    }
-                }
-            } else {
-                System.out.println("The directory latimes is empty.");
-            }
-        } else {
-            System.out.println("The specified path latimes is not a directory.");
-        }
-        //fbis
-        File directory = new File("../Data/fbis/");
-        if (directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            if (files != null && files.length > 0) {
-                for (File file : files) {
-                    if (file.isFile()) {
-                        if(file.getName()!="readchg.txt" && file.getName()!="readmela.txt")
-                            res.addAll(readFiles_Dataset_File("../Data/fbis/" + file.getName()));
-                    }
-                }
-            } else {
-                System.out.println("The directory fbis is empty.");
-            }
-        } else {
-            System.out.println("The specified path is not a directory. fbis");
-        }
-        //fr94
-        File directory = new File("../Data/fr94/");
-        if (directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            if (files != null && files.length > 0) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        File new_Files = new File("../Data/fr94/" + file.getName());
-                        File[] files_new = new_Files.listFiles();
-                        for(File file_new: files_new)
-                        {
-                            if(file.isFile())
-                            {
-                                res.addAll(readFiles_Dataset_File("../Data/fr94/" + file.getName() + "/" + file_new.getName()));
+    public static ArrayList<Document> readFiles_Dataset() {
+        ArrayList<Document> res = new ArrayList<>();
+        String[] DATA_FOLDERS = {"latimes/", "ft/", "fr94/", "fbis/"};
+
+        for (String folder : DATA_FOLDERS) {
+            File directory = new File("../Data/" + folder);
+            if (directory.isDirectory()) {
+                File[] files = directory.listFiles();
+                if (files != null && files.length > 0) {
+                    for (File file : files) {
+                        if (file.isFile()) {
+                            if (!file.getName().equals("readchg.txt") && !file.getName().equals("readmela.txt")) {
+                                res.addAll(readFiles_Dataset_File("../Data/" + folder + file.getName()));
+                            }
+                        } else if (file.isDirectory()) {
+                            // Handle nested directories
+                            File[] nestedFiles = file.listFiles();
+                            if (nestedFiles != null) {
+                                for (File nestedFile : nestedFiles) {
+                                    if (nestedFile.isFile()) {
+                                        res.addAll(readFiles_Dataset_File(nestedFile.getAbsolutePath()));
+                                    }
+                                }
                             }
                         }
                     }
+                } else {
+                    System.out.println("The directory " + folder + " is empty.");
                 }
             } else {
-                System.out.println("The directory fbis is empty.");
+                System.out.println("The specified path is not a directory: " + folder);
             }
-        } else {
-            System.out.println("The specified path is not a directory. fbis");
         }
-        //ft
-        File directory = new File("../Data/ft/");
-        if (directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            if (files != null && files.length > 0) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        File new_Files = new File("../Data/ft/" + file.getName());
-                        File[] files_new = new_Files.listFiles();
-                        for(File file_new: files_new)
-                        {
-                            if(file.isFile())
-                            {
-                                res.addAll(readFiles_Dataset_File("../Data/ft/" + file.getName() + "/" + file_new.getName()));
-                            }
-                        }
-                    }
-                }
-            } else {
-                System.out.println("The directory ft is empty.");
-            }
-        } else {
-            System.out.println("The specified path is not a directory. ft");
-        }
+        
         return res;
     }
     public static void main(String[] args) throws IOException
     {
-	ArrayList<Document> d = readFiles_Dataset_File("../Data/latimes/la123190");
+	ArrayList<Document> d = readFiles_Dataset();
 	for (Document doc : d) {
             System.out.println("Document ID: " + doc.get("documentID"));
             System.out.println("Headline: " + doc.get("headline"));
-            System.out.println("Text: " + doc.get("text"));
             System.out.println();
         }
 	System.out.println("Run Data Pre-processing");
