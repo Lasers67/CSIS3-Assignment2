@@ -142,7 +142,7 @@ public class LuceneSearch {
 				for(int j=0;j<hits.length;j++)
 				{
 					Document hitDoc = isearcher.doc(hits[j].doc);
-					resultsFile.add(query_collection.get("query_no")+ " Q0 "+ hitDoc.get("id") + " 0 " + hits[j].score + " STANDARD");
+					resultsFile.add(query_collection.get("id")+ " Q0 "+ hitDoc.get("documentID") + " 0 " + hits[j].score + " STANDARD");
 				}
 			}
 			Files.write(Paths.get("./results.txt"),resultsFile,Charset.forName("UTF-8"));
