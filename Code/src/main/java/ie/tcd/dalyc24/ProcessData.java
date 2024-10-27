@@ -3,6 +3,7 @@ package ie.tcd.dalyc24;
 import java.io.IOException;
 
 import java.nio.file.Paths;
+import java.io.File;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
