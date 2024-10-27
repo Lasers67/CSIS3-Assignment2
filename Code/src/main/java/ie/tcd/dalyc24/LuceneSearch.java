@@ -128,6 +128,9 @@ public class LuceneSearch {
 			for(int i=0;i<queryList.size();i++)
 			{
 				Map<String,String> query_collection = queryList.get(i);
+				String queryNo = query_collection.get("query_no");
+    			String description = query_collection.get("description");
+				System.out.println(queryNo + " " + description);
 				MultiFieldQueryParser queryParser = new MultiFieldQueryParser(
                         	new String[]{"title","narrative", "description"},
                         	analyzer);
