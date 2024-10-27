@@ -3,6 +3,9 @@ package ie.tcd.dalyc24;
 import java.io.IOException;
 
 import java.nio.file.Paths;
+import java.io.File;
+import java.util.*;
+import java.util.regex.*;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -26,150 +29,156 @@ public class ProcessData
 {
     
     // Directories
-    private static String DATA_DIRECTORY = "../cran.all.1400";
-    private static String QUERY_DIRECTORY = "../cran.qry";
-    public static ArrayList<Document> readFiles_Cran_Dataset()
-    {
-	ArrayList<Document> documents_cran = new ArrayList<Document>();
-        BufferedReader reader;
-	String current_head="";
-	String index = "";
-	String text = "";
-	String title = "";
-	String author = "";
-	int counter = 0;
-	try{
-		reader = new BufferedReader(new FileReader(DATA_DIRECTORY));
-		String line = reader.readLine();
-		while(line!=null)
-		{
-			String words[] = line.split("\\s+");
-			switch(words[0])
-			{
-				case ".I":
-					//if the first word is .I it means second word is index
-					if(counter>0)
-					{
-						//create document if not the 1st line
-						Document document = new Document();
-                				document.add(new StringField("id", index, Field.Store.YES));
-                				document.add(new TextField("title", title, Field.Store.YES));
-                				document.add(new TextField("author", author, Field.Store.YES));
-                				document.add(new TextField("text", text, Field.Store.YES));
-                				documents_cran.add(document);
-						index = "";
-						text = "";
-						title = "";
-						author = "";
-					}
-					index = words[1];
-					break;
-				case ".T":
-				case ".A":
-				case ".W":
-				case ".B":
-					//for all others, change head
-					current_head = words[0];
-					break;
-				default:
-					switch(current_head)
-					{
-						case ".T":
-							title=title + line + " ";
-						       break;
-						case ".A":
-							author= author + line + " ";
-					 		break;
-						case ".W":
-							text = text + line + " ";
-					}		
-			}
-			counter++;
-			line = reader.readLine();
-		}
-		//create document for the last set
-		Document document = new Document();
-        	document.add(new StringField("id", index, Field.Store.YES));
-        	document.add(new TextField("title", title, Field.Store.YES));
-        	document.add(new TextField("authors", author, Field.Store.YES));
-        	document.add(new TextField("text", text, Field.Store.YES));
-		documents_cran.add(document);
-		reader.close();
+    private static String DATA_DIRECTORY = "../Data/";
+    private static String QUERY_DIRECTORY = "../topics";
+    public static ArrayList<Document> readFiles_Dataset_File(String filePath) {
+        ArrayList<Document> documents = new ArrayList<>();
 
-	}
-	catch (IOException e)
-	{
-		e.printStackTrace();
-		System.exit(1);
-	}
-	return documents_cran;
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            String documentID = null, headline = null, text = null, byLine=null;
+            boolean inText = false;
+
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+
+                if (line.startsWith("<DOCNO>")) {
+                    documentID = line.replace("<DOCNO>", "").replace("</DOCNO>", "").trim();
+                } else if (line.startsWith("<HEADLINE>")) {
+                    StringBuilder headlineBuilder = new StringBuilder();
+                    boolean inHeadline = true;
+                    while (inHeadline && (line = reader.readLine()) != null) {
+                        line = line.trim();
+                        if (line.startsWith("</HEADLINE>")) {
+                            inHeadline = false;
+                        } else {
+                            headlineBuilder.append(line.replace("<P>", "").replace("</P>", "")).append(" ");
+                        }
+                    }
+                    headline = headlineBuilder.toString().trim();
+                }
+                else if(line.startsWith("<BYLINE>")){
+                    StringBuilder byLineBuilder = new StringBuilder();
+                    boolean inbyLine = true;
+                    while (inbyLine && (line = reader.readLine()) != null) {
+                        line = line.trim();
+                        if (line.startsWith("</BYLINE>")) {
+                            inbyLine = false;
+                        } else {
+                            byLineBuilder.append(line.replace("<P>", "").replace("</P>", "")).append(" ");
+                        }
+                    }
+                    byLine = byLineBuilder.toString().trim();
+                } 
+                else if (line.startsWith("<TEXT>")) {
+                    StringBuilder textBuilder = new StringBuilder();
+                    inText = true;
+                    while (inText && (line = reader.readLine()) != null) {
+                        line = line.trim();
+                        if (line.startsWith("</TEXT>")) {
+                            inText = false;
+                        } else {
+                            textBuilder.append(line.replace("<P>", "").replace("</P>", "")).append(" ");
+                        }
+                    }
+                    text = textBuilder.toString().trim();
+                } else if (line.startsWith("</DOC>")) {
+                    Document doc = new Document();
+                    if (documentID != null) {
+                        doc.add(new StringField("documentID", documentID, Field.Store.YES));
+                    }
+                    if (headline != null) {
+                        doc.add(new StringField("headline", headline, Field.Store.YES));
+                    }
+                    if (text != null) {
+                        doc.add(new TextField("text", text, Field.Store.YES));
+                    }
+                    if (byLine !=null)
+                    {
+                        doc.add(new StringField("byLine", byLine, Field.Store.YES));
+                    }
+                    documents.add(doc);
+                    documentID = headline = text = null;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return documents;
     }
     //function to read the query's after pre processing
-    public static List<Map<String, String>> readcran_queries()
-    {
-	List<Map<String, String>> cranQueryList = new ArrayList<Map<String, String>>();
-	BufferedReader reader;
-        String current_head="";
-        String index = "";
-        String text = "";
-	int queryNumber = 0;
-	int counter = 0;
-	try{
-		//Initialize the reader
-		reader = new BufferedReader(new FileReader(QUERY_DIRECTORY));
-                String line = reader.readLine();
-		Map<String,String> SingleQuery = new HashMap<String,String>();
-                while(line!=null)
-		{
-			String words[] = line.split("\\s+");
-                        switch(words[0])
-			{
-				case ".I":
-					//if 1st word is .I it means index
-					if(counter>0)
-                                        {
-						SingleQuery.put("id",index);
-						SingleQuery.put("query_no",String.valueOf(++queryNumber));
-						SingleQuery.put("text",text);
-						cranQueryList.add(SingleQuery);
-						SingleQuery = new HashMap<String,String>();
-                                                index = "";
-                                                text = "";
-                                        }
-                                        index = words[1];
-					break;
-				case ".W":
-					current_head = words[0];
-					break;
-				default:
-					switch(current_head)
-                                        {
-                                                case ".W":
-                                                        text = text + line + " ";
-                                        }
-					break;
-			}
-			counter++;
-			line = reader.readLine();
-		}
-		//also append query number
-                SingleQuery.put("id",index);
-                SingleQuery.put("query_no",String.valueOf(++queryNumber));
-                SingleQuery.put("text",text);
-                cranQueryList.add(SingleQuery);
+    public static List<Map<String, String>> readQueries() {
+        List<Map<String, String>> queryList = new ArrayList<>();
+        String index = "", title = "", description = "", narrative = "";
+        Pattern titlePattern = Pattern.compile("<title>\\s*(.*)");
+        int description_start = -1;
+        int narrative_start = -1;
+        int queryNumber = 0;
 
-	}
-	catch(IOException e)
-	{
-		e.printStackTrace();
-		System.exit(1);
-	}
-	return cranQueryList;
+        try (BufferedReader reader = new BufferedReader(new FileReader(QUERY_DIRECTORY))) {
+            String line;
+            Map<String, String> singleQuery = new HashMap<>();
+
+            while ((line = reader.readLine()) != null) {
+                String trimmedLine = line.trim();
+
+                if (trimmedLine.isEmpty()) continue; // Skip empty lines
+
+                if (trimmedLine.startsWith("<top>")) {
+                    // Initialize a new query map
+                    singleQuery = new HashMap<>();
+                } else if (trimmedLine.startsWith("<num>")) {
+                    index = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
+                } else if (trimmedLine.startsWith("<title>")) {
+                    Matcher matcher = titlePattern.matcher(line);
+                    if (matcher.find()) {
+                        title = matcher.group(1).trim();
+                    }
+                } else if (trimmedLine.startsWith("<desc>")) {
+                    description_start = 0;
+                    description = ""; // Start fresh for multi-line description
+                } else if (trimmedLine.startsWith("<narr>")) {
+                    description_start = -1;
+                    narrative = ""; // Start fresh for multi-line narrative
+                    narrative_start = 0;
+                } else if (trimmedLine.startsWith("</top>")) {
+                    // Store the completed query into the list
+                    singleQuery.put("id", index);
+                    singleQuery.put("query_no", String.valueOf(++queryNumber));
+                    singleQuery.put("title", title);
+                    singleQuery.put("description", description.trim());
+                    singleQuery.put("narrative", narrative.trim());
+                    //System.out.println(String.valueOf(queryNumber));
+                    //System.out.println(index);
+                    //System.out.println(title);
+                    //System.out.println(description);
+                    //System.out.println(narrative);
+                    queryList.add(singleQuery);
+
+                    // Reset variables for the next query
+                    index = "";
+                    title = "";
+                    description = "";
+                    narrative = "";
+                    narrative_start=-1;
+                } else {
+                    // Append to description or narrative if inside respective sections
+                    if (description_start==0) {
+                        description += " " + trimmedLine;
+                    } else if (narrative_start==0) {
+                        narrative += " " + trimmedLine;
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return queryList;
     }
     public static void main(String[] args) throws IOException
     {
-	ArrayList<Document> d = readFiles_Cran_Dataset();
-	List<Map<String,String>> cranQueries = readcran_queries();
 	System.out.println("Run Data Pre-processing");
     }
 }

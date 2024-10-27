@@ -59,7 +59,7 @@ import org.apache.lucene.search.similarities.AxiomaticF2LOG;
 public class LuceneSearch {
 	public static void main(String[] args) throws IOException {
         	ProcessData readFile = new ProcessData();
-        	List<Map<String, String>> queryList = readFile.readcran_queries();
+        	List<Map<String, String>> queryList = readFile.readQueries();
         	LuceneSearch searcher = new LuceneSearch();
 		System.out.println(args[0] + " " + args[1]);
         	searcher.searchQueriesInData(args[0], args[1],queryList);
@@ -94,7 +94,7 @@ public class LuceneSearch {
                         		break;
        			}
 			//load indexs
-			Directory directory = FSDirectory.open(Paths.get("./index"));
+			Directory directory = FSDirectory.open(Paths.get("./index/"));
 			DirectoryReader ireader = DirectoryReader.open(directory);
 			IndexSearcher isearcher = new IndexSearcher(ireader);
 			//depending on the sys arg choose similarity score
@@ -124,21 +124,29 @@ public class LuceneSearch {
 				default:
 					break;
 			}
+			int queries_to_consider = 25; //queryList.size()
 			List<String> resultsFile = new ArrayList<String>();
-			for(int i=0;i<queryList.size();i++)
+			for(int i=0;i<queries_to_consider;i++)
 			{
 				Map<String,String> query_collection = queryList.get(i);
+				//String queryNo = query_collection.get("query_no");
+    			//String description = query_collection.get("description");
+				//System.out.println(queryNo + " " + description);
 				MultiFieldQueryParser queryParser = new MultiFieldQueryParser(
-                        	new String[]{"title","author", "text"},
+                        	//new String[]{"title","narrative", "description"},
+							new String[]{"headline","text","byLine"},
                         	analyzer);
-				//add query's with ? as first letter
-				queryParser.setAllowLeadingWildcard(true);
-				Query query = queryParser.parse(query_collection.get("text"));
+				//only using description + narrative for start
+				String d = query_collection.get("description");
+				String escapedDescription = queryParser.escape(d);
+				String n = query_collection.get("narrative");
+				String escapedNarrative = queryParser.escape(n);
+				Query query = queryParser.parse(escapedDescription + " " + escapedNarrative);
 				ScoreDoc[] hits = isearcher.search(query, 1000).scoreDocs;
 				for(int j=0;j<hits.length;j++)
 				{
 					Document hitDoc = isearcher.doc(hits[j].doc);
-					resultsFile.add(query_collection.get("query_no")+ " Q0 "+ hitDoc.get("id") + " 0 " + hits[j].score + " STANDARD");
+					resultsFile.add(query_collection.get("id")+ " Q0 "+ hitDoc.get("documentID") + " 0 " + hits[j].score + " STANDARD");
 				}
 			}
 			Files.write(Paths.get("./results.txt"),resultsFile,Charset.forName("UTF-8"));

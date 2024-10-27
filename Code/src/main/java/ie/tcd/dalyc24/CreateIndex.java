@@ -27,75 +27,119 @@ public class CreateIndex
     
     // index Directory
     private static String INDEX_DIRECTORY = "./index/";
-
-    public static void createCranIndex(String analyzer_name, ArrayList<Document> readFiles_Cran_Dataset)
-    {
-	Analyzer analyzer = null;
-	System.out.println(analyzer_name + " For Index");
-	//depending on the sys arg, choose the analyzer
-	switch(analyzer_name)
+	public static void createIndexForEachFile(String analyzer_name) 
 	{
-		case "standard":
-			analyzer = new StandardAnalyzer(EnglishAnalyzer.getDefaultStopSet());
-			break;
-		case "keyword":
-			analyzer = new KeywordAnalyzer();
-			break;
-		case "whitespace":
-			analyzer = new WhitespaceAnalyzer();
-			break;
-		case "simple":
-			analyzer = new SimpleAnalyzer();
-			break;
-		case "stop":
-			analyzer = new StopAnalyzer();
-			break;
-		case "english":
-			analyzer = new EnglishAnalyzer();
-			break;
-		default:
-			analyzer = new StandardAnalyzer();
-			System.out.println("default analyzer\n");
-			break;
+		Analyzer analyzer = null;
+		System.out.println(analyzer_name + " For Index");
+		ProcessData proc = new ProcessData();
+		// Choose the analyzer based on the input name
+		switch (analyzer_name) {
+			case "standard":
+				analyzer = new StandardAnalyzer(EnglishAnalyzer.getDefaultStopSet());
+				break;
+			case "keyword":
+				analyzer = new KeywordAnalyzer();
+				break;
+			case "whitespace":
+				analyzer = new WhitespaceAnalyzer();
+				break;
+			case "simple":
+				analyzer = new SimpleAnalyzer();
+				break;
+			case "stop":
+				analyzer = new StopAnalyzer();
+				break;
+			case "english":
+				analyzer = new EnglishAnalyzer();
+				break;
+			default:
+				analyzer = new StandardAnalyzer();
+				System.out.println("default analyzer\n");
+				break;
+		}
 
-	}
-	try{
-		Directory directory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
+		String[] DATA_FOLDERS = {"latimes/", "ft/", "fr94/", "fbis/"};
+		try{
+		Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
-		config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND); //mode as CREATE_OR_APPEND
-		IndexWriter iwriter = new IndexWriter(directory, config);
-		for (Document doc : readFiles_Cran_Dataset) {
-                	iwriter.addDocument(doc); //add the documents after pre-processing
-           	}
-		iwriter.close();
-		directory.close();
+		config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND); // Always create a new index
+		IndexWriter iwriter = new IndexWriter(indexDirectory, config);
+		// Iterate over each data folder and process files
+		for (String folder : DATA_FOLDERS) {
+			File directory = new File("../Data/" + folder);
+			if (directory.isDirectory()) {
+				File[] files = directory.listFiles();
+				if (files != null && files.length > 0) {
+					for (File file : files) {
+						if (file.isFile()) {
+							if (!file.getName().startsWith("read")) {
+								try {
+									System.out.println("Directory:- " + folder + " file:- " + file.getName());
+									// Read the document from the file and add it to the index
+									ArrayList<Document> documents = proc.readFiles_Dataset_File(file.getAbsolutePath());
+									iwriter.addDocuments(documents);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
+						} else if (file.isDirectory()) {
+							// Handle nested directories
+							File[] nestedFiles = file.listFiles();
+								if (nestedFiles != null) {
+									for (File nestedFile : nestedFiles) {
+										if (nestedFile.isFile()) {
+											try {
+												System.out.println("Directory:- " + folder + " file:- " + nestedFile.getAbsolutePath());
+									// Create a new index for each file
+
+									// Read the document from the file and add it to the index
+									ArrayList<Document> documents = proc.readFiles_Dataset_File(nestedFile.getAbsolutePath());
+									iwriter.addDocuments(documents);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+										}
+									}
+								}
+						}
+					}
+				} else {
+					System.out.println("The directory " + folder + " is empty.");
+				}
+			} else {
+				System.out.println("The specified path is not a directory: " + folder);
+			}
+		}
+		iwriter.close(); // Close the writer
+		indexDirectory.close(); // Close the directory
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
-	catch(IOException e)
-	{
-		e.printStackTrace();
-	}
+    public static void deleteprevDir() {
+    try {
+        File f = new File(INDEX_DIRECTORY);
+        
+        // Check if the directory exists
+        if (f.exists()) {
+            // Clean the directory
+            FileUtils.cleanDirectory(f); // clean directory
+            FileUtils.forceDelete(f); // delete directory
+        }
+        
+        // Create the directory
+        FileUtils.forceMkdir(f); // create directory
+    } catch (IOException e) {
+        e.printStackTrace();
     }
-    public static void deleteprevDir()
-    {
-	try{
-            File f = new File(INDEX_DIRECTORY);
-            FileUtils.cleanDirectory(f); //clean directory
-            FileUtils.forceDelete(f); //delete directory
-            FileUtils.forceMkdir(f); //create directory
-	}
-	catch(IOException e)
-	{
-	    e.printStackTrace();
-	}
-    }
+}
     public static void main(String[] args) throws IOException
     {
-	//read the files and create list of documents
-	ProcessData proc = new ProcessData();
-	ArrayList<Document> list_of_documents = proc.readFiles_Cran_Dataset();
 	//delete the previous directory
 	deleteprevDir();
 	//create Index
-	createCranIndex(args[0],list_of_documents);
+	createIndexForEachFile(args[0]);
     }
 }
