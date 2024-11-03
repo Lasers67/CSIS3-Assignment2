@@ -40,6 +40,11 @@
     <artifactId>commons-io</artifactId>
     <version>2.6</version>
 </dependency>
+  <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20210307</version> <!-- Use the latest stable version -->
+    </dependency>
   </dependencies>
 
   <build>
