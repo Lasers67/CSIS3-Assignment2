@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,7 +22,17 @@ public class QueryExpander {
 
     private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyC1hFQ7BP3SGNkiTAO5v_dpquKcFudrS-4";
 
-    public String expandQuery(String query) {
+    public List<String> expandQueries(List<Map<String, String>> queryList) {
+        List<String> expandedQueryList = new ArrayList<>(); 
+        for (Map<String, String> query : queryList) {
+            String formattedQuery = formatForExpansion(query);
+            String expandedQuery = expandSingleQuery(formattedQuery);
+            expandedQueryList.add(expandedQuery);
+        }
+        return expandedQueryList;
+    }
+
+    public String expandSingleQuery(String query) {
         String jsonInputString = "{\"contents\":[{\"parts\":[{\"text\":\" Based on the following title, description and narrative please create a query by generating additional keywords and terms that are closely related. Include synonyms, broader concepts, industry-specific terminology, and any relevant document-specific keywords that would capture the context effectively. Aim to add terms that improve retrieval accuracy by reflecting similar words, relevant phrases, and contextually relevant keywords. Give it to me just as a string of tokens I should use: "
                                      + query + "\"}]}]}";
         System.out.println(jsonInputString);

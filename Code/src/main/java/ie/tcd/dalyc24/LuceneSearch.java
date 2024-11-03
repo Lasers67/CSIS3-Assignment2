@@ -58,14 +58,17 @@ import org.apache.lucene.search.similarities.AxiomaticF2LOG;
 
 public class LuceneSearch {
 	public static void main(String[] args) throws IOException {
-			QueryExpander queryExpander = new QueryExpander();
-			//queryExpander.expandQuery("potatos are vegetables");
-
         	ProcessData readFile = new ProcessData();
         	List<Map<String, String>> queryList = readFile.readQueries();
-			System.out.println(queryList);
-			String formatted = queryExpander.formatForExpansion(queryList.get(0));
-			queryExpander.expandQuery(formatted);
+
+			QueryExpander queryExpander = new QueryExpander();
+			// FOR TESTING
+			// String formatted = queryExpander.formatForExpansion(queryList.get(0));  
+			// queryExpander.expandSingleQuery(formatted);
+			List<String> expandedQueryList = queryExpander.expandQueries(queryList);
+
+			// TODO : make query list suitable for searchQueriesInData function
+
         	LuceneSearch searcher = new LuceneSearch();
 		System.out.println(args[0] + " " + args[1]);
         	searcher.searchQueriesInData(args[0], args[1],queryList);
