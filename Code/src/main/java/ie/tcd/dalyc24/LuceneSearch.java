@@ -65,13 +65,11 @@ public class LuceneSearch {
 			// FOR TESTING
 			// String formatted = queryExpander.formatForExpansion(queryList.get(0));  
 			// queryExpander.expandSingleQuery(formatted);
-			List<String> expandedQueryList = queryExpander.expandQueries(queryList);
-
-			// TODO : make query list suitable for searchQueriesInData function
+			List<Map<String, String>> expandedQueryList = queryExpander.expandQueries(queryList);
 
         	LuceneSearch searcher = new LuceneSearch();
-		System.out.println(args[0] + " " + args[1]);
-        	searcher.searchQueriesInData(args[0], args[1],queryList);
+			System.out.println(args[0] + " " + args[1]);
+        	searcher.searchQueriesInData(args[0], args[1], expandedQueryList);
     	}
 	public static void searchQueriesInData(String analyzer_name, String similarity_strat,List<Map<String,String>> queryList)
 	{
@@ -138,6 +136,8 @@ public class LuceneSearch {
 			for(int i=0;i<queries_to_consider;i++)
 			{
 				Map<String,String> query_collection = queryList.get(i);
+				System.out.println(query_collection);
+				System.out.println(" ");
 				//String queryNo = query_collection.get("query_no");
     			//String description = query_collection.get("description");
 				//System.out.println(queryNo + " " + description);
@@ -148,8 +148,12 @@ public class LuceneSearch {
 				//only using description + narrative for start
 				String d = query_collection.get("description");
 				String escapedDescription = queryParser.escape(d);
-				String n = query_collection.get("narrative");
-				String escapedNarrative = queryParser.escape(n);
+				// when using query expansion, "narrative" will be null so we must check for this
+				String escapedNarrative = null;
+				if (query_collection.containsKey("narrative")) {
+					String n = query_collection.get("narrative");
+					escapedNarrative = queryParser.escape(n);
+				}
 				Query query = queryParser.parse(escapedDescription + " " + escapedNarrative);
 				ScoreDoc[] hits = isearcher.search(query, 1000).scoreDocs;
 				for(int j=0;j<hits.length;j++)
