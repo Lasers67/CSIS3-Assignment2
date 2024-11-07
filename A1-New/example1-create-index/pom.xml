@@ -21,7 +21,7 @@
     </dependency>
     <dependency>
     <groupId>org.apache.lucene</groupId>
-    <artifactId>lucene-codecs</artifactId>
+    <artifactId>lucene-backward-codecs</artifactId>
     <version>9.7.0</version> <!-- Ensure this matches your Lucene version -->
 </dependency>
 	<dependency>
