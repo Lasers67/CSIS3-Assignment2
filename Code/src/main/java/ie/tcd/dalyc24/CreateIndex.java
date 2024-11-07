@@ -62,6 +62,7 @@ public class CreateIndex
 		try{
 		Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
+		//config.setCodec(new Lucene94Codec() {KnnVectorsFormat knnVectorsFormat() {return new Lucene94HnswVectorsFormat(M, beamWidth);
 		config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND); // Always create a new index
 		IndexWriter iwriter = new IndexWriter(indexDirectory, config);
 		// Iterate over each data folder and process files
