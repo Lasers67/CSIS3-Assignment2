@@ -1,5 +1,6 @@
 package ie.tcd.dalyc24;
-
+import org.apache.lucene.index.VectorEncoding;
+import org.apache.lucene.index.VectorSimilarityFunction;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.KnnVectorField;
@@ -20,8 +21,7 @@ import java.io.IOException;
 import java.util.Random;
 import org.apache.lucene.util.hnsw.HnswGraphBuilder;
 import org.apache.lucene.util.hnsw.HnswGraphSearcher;
-import org.apache.lucene.index.VectorEncoding;
-import org.apache.lucene.index.VectorSimilarityFunction;
+
 
 public class HNSWExample {
     private static final int VECTOR_DIMENSION = 1536;
