@@ -1,22 +1,8 @@
 package ie.tcd.dalyc24;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.KnnVectorField;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.KnnVectorQuery;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.ScoreDoc;
-import java.util.List;
-import org.apache.lucene.store.FSDirectory;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import org.apache.lucene.util.hnsw.HnswGraphBuilder;
+import org.apache.lucene.util.hnsw.HnswGraphSearcher;
+import org.apache.lucene.util.VectorEncoding;
 import org.apache.lucene.index.VectorSimilarityFunction;
 
 public class HNSWExample {
