@@ -56,18 +56,18 @@ public class HNSWExample {
 
         System.out.println("Constructing HNSW graph...");
         // Ensure HnswGraphBuilder and HnswGraphSearcher are properly defined or imported.
-        // var builder = HnswGraphBuilder.create(universeList, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
-        // var hnsw = builder.build(universeList);
+        var builder = HnswGraphBuilder.create(universeList, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
+        var hnsw = builder.build(universeList);
 
-        // System.out.println("Searching for top 10 neighbors of a random vector");
-        // var nn = HnswGraphSearcher.search(queryVector, k, universeList, VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
+        System.out.println("Searching for top 10 neighbors of a random vector");
+        var nn = HnswGraphSearcher.search(queryVector, k, universeList, VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
         
         // Placeholder for loop over nearest neighbors:
-        // for (var i : nn.nodes()) {
-        //     var neighbor = universe[i];
-        //     var similarity = similarityFunction.compare(queryVector, neighbor);
-        //     System.out.printf("  ordinal %d (similarity: %s)%n", i, similarity);
-        // }
+        for (var i : nn.nodes()) {
+             var neighbor = universe[i];
+             var similarity = similarityFunction.compare(queryVector, neighbor);
+             System.out.printf("  ordinal %d (similarity: %s)%n", i, similarity);
+         }
     }
 
     public static void main(String[] args) throws Exception {
