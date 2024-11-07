@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Random;
 import org.apache.lucene.util.hnsw.HnswGraphBuilder;
 import org.apache.lucene.util.hnsw.HnswGraphSearcher;
-import org.apache.lucene.util.VectorEncoding;
+import org.apache.lucene.index.VectorEncoding;
 import org.apache.lucene.index.VectorSimilarityFunction;
 
 public class HNSWExample {

@@ -29,3 +29,9 @@ topics
 Code/index/
 A1-New/cran/
 A1-New/cran.ipynb
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
