@@ -60,7 +60,8 @@ public class HNSWExample {
 
         System.out.println("Constructing HNSW graph...");
         // Ensure HnswGraphBuilder and HnswGraphSearcher are properly defined or imported.
-        var builder = HnswGraphBuilder.create(universeList, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
+        var ravv = new RandomAccessVectorValues(universe, VECTOR_DIMENSION);
+        var builder = HnswGraphBuilder.create(ravv, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
         var hnsw = builder.build(universeList);
 
         System.out.println("Searching for top 10 neighbors of a random vector");
