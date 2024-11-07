@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Random;
 import org.apache.lucene.util.hnsw.HnswGraphBuilder;
 import org.apache.lucene.util.hnsw.HnswGraphSearcher;
+import ie.tcd.dalyc24.ListRandomAccessVectorValues;
 
 
 public class HNSWExample {
@@ -60,7 +61,7 @@ public class HNSWExample {
 
         System.out.println("Constructing HNSW graph...");
         // Ensure HnswGraphBuilder and HnswGraphSearcher are properly defined or imported.
-        var ravv = new RandomAccessVectorValues(universe, VECTOR_DIMENSION);
+        var ravv = new ListRandomAccessVectorValues(universe, VECTOR_DIMENSION);
         var builder = HnswGraphBuilder.create(ravv, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
         var hnsw = builder.build(universeList);
 
