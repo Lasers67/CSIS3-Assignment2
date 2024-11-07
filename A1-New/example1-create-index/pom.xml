@@ -15,25 +15,18 @@
   
   <dependencies>
     <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-core</artifactId>
-      <version>9.4.2</version>
-    </dependency>
-    <dependency>
-    <groupId>org.apache.lucene</groupId>
-    <artifactId>lucene-backward-codecs</artifactId>
-    <version>9.4.2</version> <!-- Ensure this matches your Lucene version -->
-</dependency>
-<dependency>
-    <groupId>org.apache.lucene</groupId>
-    <artifactId>lucene-analyzers-common</artifactId>
-    <version>9.4.2</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.lucene</groupId>
-    <artifactId>lucene-queries</artifactId>
-    <version>9.4.2</version>
-</dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>9.5.0</version>
+        </dependency>
+        
+        <!-- Lucene's KNN Vector library for HNSW indexing and search -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-knn</artifactId>
+            <version>9.5.0</version>
+        </dependency>
+    </dependencies>
 	<dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -62,10 +55,10 @@
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-	  <version>3.8.0</version>
+	  <version>3.8.1</version>
 	  <configuration>
-        	<source>1.8</source>
-        	<target>1.8</target>
+        	<source>11</source>
+        	<target>11</target>
     	</configuration>
         </plugin>
         <plugin>
