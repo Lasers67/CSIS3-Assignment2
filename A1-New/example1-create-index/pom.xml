@@ -17,14 +17,14 @@
     <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
-            <version>9.5.0</version>
+            <version>9.2.0</version>
         </dependency>
         
         <!-- Lucene's KNN Vector library for HNSW indexing and search -->
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-knn</artifactId>
-            <version>9.5.0</version>
+            <version>9.2.0</version>
         </dependency>
 	<dependency>
       <groupId>junit</groupId>
