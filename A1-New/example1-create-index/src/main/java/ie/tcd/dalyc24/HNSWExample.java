@@ -4,8 +4,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.KnnVectorField;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.KnnVectorQuery;
 import org.apache.lucene.store.Directory;
@@ -24,12 +22,10 @@ import org.apache.lucene.index.VectorSimilarityFunction;
 public class HNSWExample {
     private static final int VECTOR_DIMENSION = 1536;
     private Directory directory;
-    private IndexWriter indexWriter;
     private static final VectorSimilarityFunction similarityFunction = VectorSimilarityFunction.COSINE;
 
     public HNSWExample() throws Exception {
         directory = FSDirectory.open(Paths.get("./index/"));
-        indexWriter = new IndexWriter(directory, new IndexWriterConfig(new StandardAnalyzer()));
     }
 
     public static float[][] read2DFloatArrayFromFile(String fileName) {
