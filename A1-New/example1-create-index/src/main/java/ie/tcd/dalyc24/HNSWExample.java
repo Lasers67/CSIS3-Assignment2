@@ -72,8 +72,8 @@ public class HNSWExample {
 
     public static void main(String[] args) throws Exception {
         HNSWExample example = new HNSWExample();
-        String indexFileName = "index.txt";
-        String queryFileName = "query.txt";
+        String indexFileName = "../index.txt";
+        String queryFileName = "../query.txt";
         float[][] A = read2DFloatArrayFromFile(indexFileName);
 
         float[][] queryVectors = read2DFloatArrayFromFile(queryFileName);
