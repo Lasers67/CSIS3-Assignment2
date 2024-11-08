@@ -25,7 +25,7 @@ import ie.tcd.dalyc24.ListRandomAccessVectorValues;
 
 
 public class HNSWExample {
-    private static final int VECTOR_DIMENSION = 1536;
+    private static final int VECTOR_DIMENSION = 3072;
     private Directory directory;
     private static final VectorSimilarityFunction similarityFunction = VectorSimilarityFunction.COSINE;
 
