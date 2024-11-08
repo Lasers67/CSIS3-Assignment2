@@ -63,12 +63,15 @@ public class HNSWExample {
         var builder = HnswGraphBuilder.create(ravv, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
         var hnsw = builder.build(ravv.copy());
         var nn = HnswGraphSearcher.search(queryVector, k, ravv.copy(), VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
-
+        private List<String> temp = new ArrayList<>();
         for (var i : nn.nodes()) {
             var neighbor = universe.get(i);
             var similarity = similarityFunction.compare(queryVector, neighbor);
-            resultsFile.add(num + " Q0 " + i + " 0 " + similarity + " STANDARD");
-            num++;
+            temp.add(num + " Q0 " + i + " 0 " + similarity + " STANDARD");
+        }
+        for(int j=999;j>=0;j--)
+        {
+            resultsFile.add(temp.get(j));
         }
     }
 
@@ -84,9 +87,10 @@ public class HNSWExample {
         List<float[]> queryVectors = read2DFloatArrayFromFile(queryFileName);
 
         for (float[] query : queryVectors) {
+            System.out.printf("RUNNING FOR QUERY " + num + "\n");
             example.search(A, query, 1000);
+            num++;
         }
-
         example.writeResultsToFile();
     }
 }
