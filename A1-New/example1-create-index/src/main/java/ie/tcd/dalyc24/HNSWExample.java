@@ -79,7 +79,7 @@ public class HNSWExample {
         Files.write(Paths.get("./resultsNEW.txt"), resultsFile, StandardCharsets.UTF_8);
     }
 
-    public static void main(String[] args) throws Exception {
+    public void main(String[] args) throws Exception {
         HNSWExample example = new HNSWExample();
         String indexFileName = "../index.txt";
         String queryFileName = "../query.txt";
