@@ -28,7 +28,7 @@ public class HNSWExample {
     private static final int VECTOR_DIMENSION = 3072;
     private Directory directory;
     private static final VectorSimilarityFunction similarityFunction = VectorSimilarityFunction.COSINE;
-    public List<String> resultsFile = new ArrayList<String>();
+    private List<String> resultsFile = new ArrayList<String>();
     private int num=1;
     public HNSWExample() throws Exception {
         directory = FSDirectory.open(Paths.get("./index/"));
