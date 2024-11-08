@@ -64,7 +64,7 @@ public class HNSWExample {
         var builder = HnswGraphBuilder.create(ravv, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
         var hnsw = builder.build(ravv.copy());
 
-        System.out.println("Searching for top 10 neighbors of a random vector");
+        System.out.println("Searching for top 10 neighbors vector");
         var nn = HnswGraphSearcher.search(queryVector, k, ravv.copy(), VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
         
         // Placeholder for loop over nearest neighbors:
@@ -83,6 +83,7 @@ public class HNSWExample {
 
         List<float[]> queryVectors = read2DFloatArrayFromFile(queryFileName);
         for (float[] query : queryVectors) {
+            System.out.println("HELLO:-  ", query.length);
             example.search(A, query, 5);
         }
     }
