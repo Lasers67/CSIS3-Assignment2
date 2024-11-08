@@ -68,7 +68,7 @@ public class HNSWExample {
         for (var i : nn.nodes()) {
             var neighbor = universe.get(i);
             var similarity = similarityFunction.compare(queryVector, neighbor);
-            temp.add(num + " Q0 " + i + " 0 " + similarity + " STANDARD");
+            temp.add(num + " Q0 " + (i+1) + " 0 " + similarity + " STANDARD");
         }
         for (int j = 999; j >= 0; j--) {
             resultsFile.add(temp.get(j));
