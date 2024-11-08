@@ -65,7 +65,7 @@ public class HNSWExample {
         var hnsw = builder.build(ravv.copy());
 
         System.out.println("Searching for top 10 neighbors of a random vector");
-        var nn = HnswGraphSearcher.search(queryVector, k, universe, VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
+        var nn = HnswGraphSearcher.search(queryVector, k, ravv.copy(), VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
         
         // Placeholder for loop over nearest neighbors:
         for (var i : nn.nodes()) {
