@@ -80,10 +80,12 @@ public class HNSWExample {
         String indexFileName = "../index.txt";
         String queryFileName = "../query.txt";
         List<float[]> A = read2DFloatArrayFromFile(indexFileName);
-
+        for (float[] a : A) {
+            System.out.printf("HELLO1:-  " +  a.length);
+        }
         List<float[]> queryVectors = read2DFloatArrayFromFile(queryFileName);
         for (float[] query : queryVectors) {
-            System.out.printf("HELLO:-  ", query.length);
+            System.out.printf("HELLO:-  " +  query.length);
             example.search(A, query, 5);
         }
     }
