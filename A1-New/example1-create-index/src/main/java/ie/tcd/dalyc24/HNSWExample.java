@@ -33,7 +33,7 @@ public class HNSWExample {
         directory = FSDirectory.open(Paths.get("./index/"));
     }
 
-    public static float[][] read2DFloatArrayFromFile(String fileName) {
+    public static List<float[]> read2DFloatArrayFromFile(String fileName) {
         List<float[]> rows = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
@@ -52,7 +52,7 @@ public class HNSWExample {
             return null;
         }
 
-        return rows.toArray(new float[rows.size()][]);
+        return rows;
     }
 
     public void search(float[][] universe, float[] queryVector, int k) throws Exception {
@@ -80,7 +80,7 @@ public class HNSWExample {
         HNSWExample example = new HNSWExample();
         String indexFileName = "../index.txt";
         String queryFileName = "../query.txt";
-        float[][] A = read2DFloatArrayFromFile(indexFileName);
+        List<float[]> A = read2DFloatArrayFromFile(indexFileName);
 
         float[][] queryVectors = read2DFloatArrayFromFile(queryFileName);
         for (float[] query : queryVectors) {
