@@ -59,6 +59,7 @@ public class HNSWExample {
     }
 
     public void search(List<float[]> universe, float[] queryVector, int k) throws Exception {
+        System.out.printf("RUNNING FOR QUERY " + num + "\n");
         var ravv = new ListRandomAccessVectorValues(universe, VECTOR_DIMENSION);
         var builder = HnswGraphBuilder.create(ravv, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
         var hnsw = builder.build(ravv.copy());
@@ -69,17 +70,17 @@ public class HNSWExample {
             var similarity = similarityFunction.compare(queryVector, neighbor);
             temp.add(num + " Q0 " + i + " 0 " + similarity + " STANDARD");
         }
-        for(int j=999;j>=0;j--)
-        {
+        for (int j = 999; j >= 0; j--) {
             resultsFile.add(temp.get(j));
         }
+        num++;
     }
 
     public void writeResultsToFile() throws IOException {
         Files.write(Paths.get("./resultsNEW.txt"), resultsFile, StandardCharsets.UTF_8);
     }
 
-    public void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         HNSWExample example = new HNSWExample();
         String indexFileName = "../index.txt";
         String queryFileName = "../query.txt";
@@ -87,10 +88,9 @@ public class HNSWExample {
         List<float[]> queryVectors = read2DFloatArrayFromFile(queryFileName);
 
         for (float[] query : queryVectors) {
-            System.out.printf("RUNNING FOR QUERY " + num + "\n");
             example.search(A, query, 1000);
-            num++;
         }
+
         example.writeResultsToFile();
     }
 }
