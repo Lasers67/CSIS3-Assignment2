@@ -56,21 +56,20 @@ public class HNSWExample {
     }
 
     public void search(List<float[]> universe, float[] queryVector, int k) throws Exception {
-        int universeSize = universe.length;
         //List<float[]> universeList = new ArrayList<>(List.of(universe));
 
         System.out.println("Constructing HNSW graph...");
         // Ensure HnswGraphBuilder and HnswGraphSearcher are properly defined or imported.
         var ravv = new ListRandomAccessVectorValues(universe, VECTOR_DIMENSION);
         var builder = HnswGraphBuilder.create(ravv, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
-        var hnsw = builder.build(universe);
+        var hnsw = builder.build(ravv.copy());
 
         System.out.println("Searching for top 10 neighbors of a random vector");
         var nn = HnswGraphSearcher.search(queryVector, k, universe, VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
         
         // Placeholder for loop over nearest neighbors:
         for (var i : nn.nodes()) {
-             var neighbor = universe[i];
+             var neighbor = universe.get(i);
              var similarity = similarityFunction.compare(queryVector, neighbor);
              System.out.printf("  ordinal %d (similarity: %s)%n", i, similarity);
          }
@@ -82,7 +81,7 @@ public class HNSWExample {
         String queryFileName = "../query.txt";
         List<float[]> A = read2DFloatArrayFromFile(indexFileName);
 
-        float[][] queryVectors = read2DFloatArrayFromFile(queryFileName);
+        List<float[]> queryVectors = read2DFloatArrayFromFile(queryFileName);
         for (float[] query : queryVectors) {
             example.search(A, query, 5);
         }
