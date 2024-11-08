@@ -55,18 +55,18 @@ public class HNSWExample {
         return rows;
     }
 
-    public void search(float[][] universe, float[] queryVector, int k) throws Exception {
+    public void search(List<float[]> universe, float[] queryVector, int k) throws Exception {
         int universeSize = universe.length;
-        List<float[]> universeList = new ArrayList<>(List.of(universe));
+        //List<float[]> universeList = new ArrayList<>(List.of(universe));
 
         System.out.println("Constructing HNSW graph...");
         // Ensure HnswGraphBuilder and HnswGraphSearcher are properly defined or imported.
         var ravv = new ListRandomAccessVectorValues(universe, VECTOR_DIMENSION);
         var builder = HnswGraphBuilder.create(ravv, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
-        var hnsw = builder.build(universeList);
+        var hnsw = builder.build(universe);
 
         System.out.println("Searching for top 10 neighbors of a random vector");
-        var nn = HnswGraphSearcher.search(queryVector, k, universeList, VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
+        var nn = HnswGraphSearcher.search(queryVector, k, universe, VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
         
         // Placeholder for loop over nearest neighbors:
         for (var i : nn.nodes()) {
