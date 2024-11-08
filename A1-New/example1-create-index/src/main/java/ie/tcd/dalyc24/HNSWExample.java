@@ -83,7 +83,7 @@ public class HNSWExample {
 
         List<float[]> queryVectors = read2DFloatArrayFromFile(queryFileName);
         for (float[] query : queryVectors) {
-            System.out.println("HELLO:-  ", query.length);
+            System.out.printf("HELLO:-  ", query.length);
             example.search(A, query, 5);
         }
     }
