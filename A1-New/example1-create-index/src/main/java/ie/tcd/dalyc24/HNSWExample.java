@@ -28,7 +28,8 @@ public class HNSWExample {
     private static final int VECTOR_DIMENSION = 3072;
     private Directory directory;
     private static final VectorSimilarityFunction similarityFunction = VectorSimilarityFunction.COSINE;
-
+    public List<String> resultsFile = new ArrayList<String>();
+    private int num=1;
     public HNSWExample() throws Exception {
         directory = FSDirectory.open(Paths.get("./index/"));
     }
@@ -57,21 +58,18 @@ public class HNSWExample {
 
     public void search(List<float[]> universe, float[] queryVector, int k) throws Exception {
         //List<float[]> universeList = new ArrayList<>(List.of(universe));
-
-        System.out.println("Constructing HNSW graph...");
         // Ensure HnswGraphBuilder and HnswGraphSearcher are properly defined or imported.
         var ravv = new ListRandomAccessVectorValues(universe, VECTOR_DIMENSION);
         var builder = HnswGraphBuilder.create(ravv, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
         var hnsw = builder.build(ravv.copy());
-
-        System.out.println("Searching for top 10 neighbors vector");
         var nn = HnswGraphSearcher.search(queryVector, k, ravv.copy(), VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
         
         // Placeholder for loop over nearest neighbors:
         for (var i : nn.nodes()) {
              var neighbor = universe.get(i);
              var similarity = similarityFunction.compare(queryVector, neighbor);
-             System.out.printf("  ordinal %d (similarity: %s)%n", i, similarity);
+             resultsFile.add(num + " Q0 "+ i + " 0 " + similarity + " STANDARD");
+             num++;
          }
     }
 
@@ -82,7 +80,8 @@ public class HNSWExample {
         List<float[]> A = read2DFloatArrayFromFile(indexFileName);
         List<float[]> queryVectors = read2DFloatArrayFromFile(queryFileName);
         for (float[] query : queryVectors) {
-            example.search(A, query, 5);
+            example.search(A, query, 1000);
         }
+         Files.write(Paths.get("./resultsNEW.txt"),resultsFile,Charset.forName("UTF-8"));
     }
 }
