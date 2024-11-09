@@ -22,6 +22,8 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.search.similarities.BM25Similarity;
 // import org.apache.lucene.store.RAMDirectory;
  
+import static org.apache.lucene.analysis.en.EnglishAnalyzer.ENGLISH_STOP_WORDS_SET;
+
 public class CreateIndex
 {
     
@@ -47,10 +49,13 @@ public class CreateIndex
 				analyzer = new SimpleAnalyzer();
 				break;
 			case "stop":
-				analyzer = new StopAnalyzer();
+				analyzer = new StopAnalyzer(ENGLISH_STOP_WORDS_SET);
 				break;
 			case "english":
 				analyzer = new EnglishAnalyzer();
+				break;
+			case "custom":
+				analyzer = new CustomAnalyzer();
 				break;
 			default:
 				analyzer = new StandardAnalyzer();

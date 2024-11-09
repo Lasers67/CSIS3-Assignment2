@@ -59,6 +59,7 @@ import org.apache.lucene.search.similarities.NormalizationH1;
 // Axiomatic Similarity
 import org.apache.lucene.search.similarities.AxiomaticF2LOG;
 
+import static org.apache.lucene.analysis.en.EnglishAnalyzer.ENGLISH_STOP_WORDS_SET;
 
 public class LuceneSearch {
 	public static void main(String[] args) throws IOException {
@@ -103,11 +104,14 @@ public class LuceneSearch {
                         		analyzer = new SimpleAnalyzer();
                         		break;
                 		case "stop":
-                        		analyzer = new StopAnalyzer();
+                        		analyzer = new StopAnalyzer(ENGLISH_STOP_WORDS_SET);
                         		break;
                 		case "english":
                         		analyzer = new EnglishAnalyzer();
                         		break;
+						case "custom":
+								analyzer = new CustomAnalyzer();
+								break;
                 		default:
                         		analyzer = new StandardAnalyzer();
                         		break;
