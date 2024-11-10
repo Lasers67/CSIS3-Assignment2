@@ -88,7 +88,7 @@ public class HNSWExample {
         }
 
         // Sort by similarity in descending order
-        temp.sort((a, b) -> Float.compare(b.similarity, a.similarity));
+        temp.sort((a, b) -> Float.compare(a.similarity, b.similarity));
 
         // Add sorted results to resultsFile
         for (int j = temp.size() - 1; j >= 0; j--) {
