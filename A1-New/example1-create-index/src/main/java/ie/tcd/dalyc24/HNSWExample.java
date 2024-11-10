@@ -70,7 +70,7 @@ public class HNSWExample {
             var similarity = similarityFunction.compare(queryVector, neighbor);
             temp.add(num + " Q0 " + (i+1) + " 0 " + similarity + " STANDARD");
         }
-        for (int j = 999; j >= 0; j--) {
+        for (int j = 49; j >= 0; j--) {
             resultsFile.add(temp.get(j));
         }
         num++;
