@@ -26,6 +26,18 @@ import org.apache.lucene.util.hnsw.HnswGraphBuilder;
 import org.apache.lucene.util.hnsw.HnswGraphSearcher;
 import ie.tcd.dalyc24.ListRandomAccessVectorValues;
 
+// Inner class to hold similarity score and result string
+class Result {
+    float similarity;
+    String resultString;
+
+    Result(float similarity, String resultString) {
+        this.similarity = similarity;
+        this.resultString = resultString;
+    }
+}
+
+
 public class HNSWExample {
     private static final int VECTOR_DIMENSION = 3072;
     private Directory directory;
@@ -65,25 +77,27 @@ public class HNSWExample {
         var hnsw = builder.build(ravv.copy());
         var nn = HnswGraphSearcher.search(queryVector, k, ravv.copy(), VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
 
-        // List to store pairs of similarity scores and result strings
-        List<Pair<Float, String>> temp = new ArrayList<>();
+        // List to store results with similarity scores
+        List<Result> temp = new ArrayList<>();
 
         for (var i : nn.nodes()) {
             var neighbor = universe.get(i);
             var similarity = similarityFunction.compare(queryVector, neighbor);
             
-            // Add a pair of similarity score and result string
-            temp.add(new Pair<>(similarity, num + " Q0 " + (i+1) + " 0 " + similarity + " STANDARD"));
+            // Add a new Result object with similarity and result string
+            temp.add(new Result(similarity, num + " Q0 " + (i+1) + " 0 " + similarity + " STANDARD"));
         }
 
         // Sort by similarity in descending order
-        temp.sort((a, b) -> Float.compare(b.getKey(), a.getKey()));
+        temp.sort((a, b) -> Float.compare(b.similarity, a.similarity));
 
         // Add sorted results to resultsFile
-        for (var pair : temp) {
-            resultsFile.add(pair.getValue());
+        for (int j = temp.size() - 1; j >= 0; j--) {
+            resultsFile.add(temp.get(j).resultString);
         }
+
         num++;
+
     
     }
 
