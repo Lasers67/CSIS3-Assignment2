@@ -1,5 +1,5 @@
 package ie.tcd.dalyc24;
-
+import javafx.util.Pair;
 import org.apache.lucene.index.VectorEncoding;
 import org.apache.lucene.index.VectorSimilarityFunction;
 import org.apache.lucene.document.Document;
