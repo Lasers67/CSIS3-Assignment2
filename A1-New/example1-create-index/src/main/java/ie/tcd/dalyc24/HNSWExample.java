@@ -64,16 +64,27 @@ public class HNSWExample {
         var builder = HnswGraphBuilder.create(ravv, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
         var hnsw = builder.build(ravv.copy());
         var nn = HnswGraphSearcher.search(queryVector, k, ravv.copy(), VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
-        List<String> temp = new ArrayList<>();
+
+        // List to store pairs of similarity scores and result strings
+        List<Pair<Float, String>> temp = new ArrayList<>();
+
         for (var i : nn.nodes()) {
             var neighbor = universe.get(i);
             var similarity = similarityFunction.compare(queryVector, neighbor);
-            temp.add(num + " Q0 " + (i+1) + " 0 " + similarity + " STANDARD");
+            
+            // Add a pair of similarity score and result string
+            temp.add(new Pair<>(similarity, num + " Q0 " + (i+1) + " 0 " + similarity + " STANDARD"));
         }
-        for (int j = 49; j >= 0; j--) {
-            resultsFile.add(temp.get(j));
+
+        // Sort by similarity in descending order
+        temp.sort((a, b) -> Float.compare(b.getKey(), a.getKey()));
+
+        // Add sorted results to resultsFile
+        for (var pair : temp) {
+            resultsFile.add(pair.getValue());
         }
         num++;
+    
     }
 
     public void writeResultsToFile() throws IOException {
