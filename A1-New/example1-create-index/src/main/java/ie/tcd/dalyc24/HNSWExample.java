@@ -76,23 +76,26 @@ public class HNSWExample {
         var hnsw = builder.build(ravv.copy());
         var nn = HnswGraphSearcher.search(queryVector, k, ravv.copy(), VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
 
-        // List to store results with similarity scores
-        List<Result> temp = new ArrayList<>();
+        // List to store similarity scores and result strings
+        List<Entry<Float, String>> temp = new ArrayList<>();
 
         for (var i : nn.nodes()) {
             var neighbor = universe.get(i);
             var similarity = similarityFunction.compare(queryVector, neighbor);
             
-            // Add a new Result object with similarity and result string
-            temp.add(new Result(similarity, num + " Q0 " + (i+1) + " 0 " + similarity + " STANDARD"));
+            // Add a new entry with similarity and result string
+            temp.add(new AbstractMap.SimpleEntry<>(similarity, num + " Q0 " + (i+1) + " " + similarity + " STANDARD"));
         }
 
         // Sort by similarity in descending order
-        temp.sort((a, b) -> Float.compare(a.similarity, b.similarity));
+        temp.sort((a, b) -> Float.compare(b.getKey(), a.getKey()));
 
-        // Add sorted results to resultsFile
-        for (int j = temp.size() - 1; j >= 0; j--) {
-            resultsFile.add(temp.get(j).resultString);
+        // Add sorted results to resultsFile with rank
+        int rank = 1;
+        for (var entry : temp) {
+            String rankedResult = num + " Q0 " + entry.getValue().split(" ", 3)[1] + " " + rank + " " + entry.getKey() + " STANDARD";
+            resultsFile.add(rankedResult);
+            rank++;
         }
 
         num++;
