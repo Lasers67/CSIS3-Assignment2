@@ -116,7 +116,6 @@ num++;
         List<float[]> queryVectors = read2DFloatArrayFromFile(queryFileName);
         for (float[] query : queryVectors) {
             example.search(A, query, 50);
-            counter++;
         }
 
         example.writeResultsToFile();
