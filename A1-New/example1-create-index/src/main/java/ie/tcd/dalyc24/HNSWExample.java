@@ -72,7 +72,7 @@ public class HNSWExample {
     public void search(List<float[]> universe, float[] queryVector, int k) throws Exception {
         System.out.printf("RUNNING FOR QUERY " + num + "\n");
 var ravv = new ListRandomAccessVectorValues(universe, VECTOR_DIMENSION);
-var builder = HnswGraphBuilder.create(ravv, VectorEncoding.FLOAT32, similarityFunction, 16, 100, new Random().nextInt());
+var builder = HnswGraphBuilder.create(ravv, VectorEncoding.FLOAT32, similarityFunction, 50, 100, new Random().nextInt());
 var hnsw = builder.build(ravv.copy());
 var nn = HnswGraphSearcher.search(queryVector, k, ravv.copy(), VectorEncoding.FLOAT32, similarityFunction, hnsw, null, Integer.MAX_VALUE);
 
