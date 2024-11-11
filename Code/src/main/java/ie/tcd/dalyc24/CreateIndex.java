@@ -143,9 +143,9 @@ public class CreateIndex
     public static void main(String[] args) throws IOException
     {
 	//delete the previous directory
-	deleteprevDir();
+	//deleteprevDir();
 	//create Index
-	createIndexForEachFile(args[0]);
+	//createIndexForEachFile(args[0]);
 	// Load the file content into a String
             String content = new String(Files.readAllBytes(Paths.get("/opt/CSIS3-Assignment2/Embeddings/fbis/fbis-embeddings_14.json")));
 
