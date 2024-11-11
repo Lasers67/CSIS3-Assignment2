@@ -20,6 +20,10 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.search.similarities.BM25Similarity;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 // import org.apache.lucene.store.RAMDirectory;
  
 public class CreateIndex

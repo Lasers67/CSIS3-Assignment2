@@ -20,6 +20,11 @@
       <version>8.6.3</version>
     </dependency>
     <dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20210307</version>
+</dependency>
+    <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queryparser</artifactId>
             <version>7.5.0</version>
