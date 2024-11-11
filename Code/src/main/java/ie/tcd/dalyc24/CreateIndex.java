@@ -147,7 +147,7 @@ public class CreateIndex
 	//create Index
 	createIndexForEachFile(args[0]);
 	// Load the file content into a String
-            String content = new String(Files.readAllBytes(Paths.get("../Embeddings/fbis/fbis-embeddings_14.json")));
+            String content = new String(Files.readAllBytes(Paths.get("/opt/CSIS3-Assignment2/Embeddings/fbis/fbis-embeddings_14.json")));
 
             // Parse the content as a JSON array
             JSONArray jsonArray = new JSONArray(content);
