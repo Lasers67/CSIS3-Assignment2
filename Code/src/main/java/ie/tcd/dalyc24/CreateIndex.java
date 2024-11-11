@@ -142,5 +142,18 @@ public class CreateIndex
 	deleteprevDir();
 	//create Index
 	createIndexForEachFile(args[0]);
+	// Load the file content into a String
+            String content = new String(Files.readAllBytes(Paths.get("../../Embeddings/fbis/fbis-embeddings_14.json")));
+
+            // Parse the content as a JSON array
+            JSONArray jsonArray = new JSONArray(content);
+
+            // Iterate through the array and print each element
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                System.out.println("Document ID: " + jsonObject.getString("documentID"));
+                JSONArray textArray = jsonObject.getJSONArray("text");
+                System.out.println("Text: " + textArray.toString());
+            }
     }
 }
