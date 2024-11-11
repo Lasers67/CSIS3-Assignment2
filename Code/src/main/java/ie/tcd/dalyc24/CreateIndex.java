@@ -149,15 +149,28 @@ public class CreateIndex
 	// Load the file content into a String
             String content = new String(Files.readAllBytes(Paths.get("/opt/CSIS3-Assignment2/Embeddings/fbis/fbis-embeddings_14.json")));
 
-            // Parse the content as a JSON array
-            JSONArray jsonArray = new JSONArray(content);
+            // Attempt to parse it as a JSON array first
+            if (content.trim().startsWith("[")) {
+                // Parse as JSONArray if content starts with [
+                JSONArray jsonArray = new JSONArray(content);
 
-            // Iterate through the array and print each element
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                System.out.println("Document ID: " + jsonObject.getString("documentID"));
-                JSONArray textArray = jsonObject.getJSONArray("text");
-                System.out.println("Text: " + textArray.toString());
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    System.out.println("Document ID: " + jsonObject.getString("documentID"));
+                    JSONArray textArray = jsonObject.getJSONArray("text");
+                    System.out.println("Text: " + textArray.toString());
+                }
+            } else {
+                // Parse as JSONObject and retrieve the array if content starts with {
+                JSONObject jsonObject = new JSONObject(content);
+                JSONArray jsonArray = jsonObject.getJSONArray("yourArrayKey"); // replace "yourArrayKey" with actual key if nested
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject arrayElement = jsonArray.getJSONObject(i);
+                    System.out.println("Document ID: " + arrayElement.getString("documentID"));
+                    JSONArray textArray = arrayElement.getJSONArray("text");
+                    System.out.println("Text: " + textArray.toString());
+                }
             }
     }
 }
