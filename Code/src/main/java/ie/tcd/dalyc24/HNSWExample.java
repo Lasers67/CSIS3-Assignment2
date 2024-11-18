@@ -50,7 +50,7 @@ public class HNSWExample {
         directory = FSDirectory.open(Paths.get("./index/"));
     }
 
-    public static void read2DFloatArrayFromFile(String fileNameEmbedding, String fileNameFileNames ) {
+    public void read2DFloatArrayFromFile(String fileNameEmbedding, String fileNameFileNames ) {
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileNameEmbedding))) {
             String line;
@@ -64,7 +64,7 @@ public class HNSWExample {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return;
         }
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileNameFileNames))) {
@@ -75,7 +75,7 @@ public class HNSWExample {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return;
         }
     }
 
