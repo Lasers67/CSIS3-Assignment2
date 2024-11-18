@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import org.apache.lucene.util.hnsw.HnswGraphBuilder;
@@ -44,7 +45,7 @@ public class HNSWExample {
     private List<String> resultsFile = new ArrayList<>();
     private int num = 1;
     List<float[]> embedding_rows = new ArrayList<>();
-    List<string> embedding_rows_filesnames = new ArrayList<>();
+    List<String> embedding_rows_filesnames = new ArrayList<>();
     public HNSWExample() throws Exception {
         directory = FSDirectory.open(Paths.get("./index/"));
     }
