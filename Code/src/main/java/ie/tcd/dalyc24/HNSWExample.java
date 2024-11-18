@@ -120,7 +120,7 @@ public class HNSWExample {
 
     public static void main(String[] args) throws Exception {
         HNSWExample example = new HNSWExample();
-        String basePath = "./Embeddings/";
+        String basePath = "../Embeddings/";
         String[] dirs = {"ft", "fbis", "latimes", "fr94"};
         for (String dir : dirs) {
             File directory = new File(basePath + "/" + dir);
