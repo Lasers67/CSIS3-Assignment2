@@ -44,13 +44,13 @@ public class HNSWExample {
     private static final VectorSimilarityFunction similarityFunction = VectorSimilarityFunction.COSINE;
     private List<String> resultsFile = new ArrayList<>();
     private int num = 1;
-    List<float[]> embedding_rows = new ArrayList<>();
-    List<String> embedding_rows_filesnames = new ArrayList<>();
+    private List<float[]> embedding_rows = new ArrayList<>();
+    private List<String> embedding_rows_filesnames = new ArrayList<>();
     public HNSWExample() throws Exception {
         directory = FSDirectory.open(Paths.get("./index/"));
     }
 
-    public void read2DFloatArrayFromFile(String fileNameEmbedding, String fileNameFileNames ) {
+    public static void read2DFloatArrayFromFile(String fileNameEmbedding, String fileNameFileNames ) {
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileNameEmbedding))) {
             String line;
