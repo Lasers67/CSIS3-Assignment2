@@ -1,3 +1,3 @@
-ie/tcd/dalyc24/CreateIndex.class
-ie/tcd/dalyc24/ProcessData.class
-ie/tcd/dalyc24/LuceneSearch.class
+ie/tcd/dalyc24/HNSWExample.class
+ie/tcd/dalyc24/ListRandomAccessVectorValues.class
+ie/tcd/dalyc24/Result.class
