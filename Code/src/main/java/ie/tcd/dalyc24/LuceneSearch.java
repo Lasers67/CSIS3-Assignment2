@@ -168,7 +168,7 @@ public class LuceneSearch {
 				String t = query_collection.get("title");
 				String escapedTitle = queryParser.escape(t);
 				Query queryTitle = queryParser.parse(escapedTitle);
-				boolQ.add(new BoostQuery(queryTitle, 5f), BooleanClause.Occur.SHOULD);
+				boolQ.add(new BoostQuery(queryTitle, 4f), BooleanClause.Occur.SHOULD);
 
 				//only using description + narrative for start
 								// String n = query_collection.get("narrative");
@@ -178,10 +178,15 @@ public class LuceneSearch {
 				String d = query_collection.get("description");
 				String escapedDescription = queryParser.escape(d);
 				Query queryDescription = queryParser.parse(escapedDescription);
-				boolQ.add(new BoostQuery(queryDescription, 4f), BooleanClause.Occur.SHOULD);
+				boolQ.add(new BoostQuery(queryDescription, 5f), BooleanClause.Occur.SHOULD);
+
+				String n = query_collection.get("narrative");
+				String escapedNarrative = queryParser.escape(n);
+				Query queryNarrative = queryParser.parse(escapedNarrative);
+				boolQ.add(new BoostQuery(queryNarrative, 3f), BooleanClause.Occur.SHOULD);
 
 				ArrayList<Query> moreLikeThisQueries = moreLikeThis(isearcher, analyzer, ireader, boolQ.build());
-
+				// System.out.println(moreLikeThisQueries.get(0));
 				for (Query mlt : moreLikeThisQueries) {
 					boolQ.add(mlt, BooleanClause.Occur.SHOULD);
 				}
