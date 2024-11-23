@@ -1,3 +1,4 @@
-/opt/Assignment1/example1-create-index/src/main/java/ie/tcd/dalyc24/LuceneSearch.java
-/opt/Assignment1/example1-create-index/src/main/java/ie/tcd/dalyc24/ProcessData.java
-/opt/Assignment1/example1-create-index/src/main/java/ie/tcd/dalyc24/CreateIndex.java
+/Users/pratyushgaurav/Documents/CSIS3-Assignment2/Code/src/main/java/ie/tcd/dalyc24/CreateIndex.java
+/Users/pratyushgaurav/Documents/CSIS3-Assignment2/Code/src/main/java/ie/tcd/dalyc24/ProcessData.java
+/Users/pratyushgaurav/Documents/CSIS3-Assignment2/Code/src/main/java/ie/tcd/dalyc24/LuceneSearch.java
+/Users/pratyushgaurav/Documents/CSIS3-Assignment2/Code/src/main/java/ie/tcd/dalyc24/CustomAnalyzer.java
