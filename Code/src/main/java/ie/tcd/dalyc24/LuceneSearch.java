@@ -65,9 +65,16 @@ public class LuceneSearch {
 	public static void main(String[] args) throws IOException {
         	ProcessData readFile = new ProcessData();
         	List<Map<String, String>> queryList = readFile.readQueries();
+
+			QueryExpander queryExpander = new QueryExpander();
+			// FOR TESTING
+			// String formatted = queryExpander.formatForExpansion(queryList.get(0));  
+			// queryExpander.expandSingleQuery(formatted);
+			List<Map<String, String>> expandedQueryList = queryExpander.expandQueries(queryList);
+
         	LuceneSearch searcher = new LuceneSearch();
-		System.out.println(args[0] + " " + args[1]);
-        	searcher.searchQueriesInData(args[0], args[1],queryList);
+			System.out.println(args[0] + " " + args[1]);
+        	searcher.searchQueriesInData(args[0], args[1], expandedQueryList);
     	}
 
 	private static ArrayList<Query> moreLikeThis(IndexSearcher isearcher, Analyzer analyzer, DirectoryReader ireader,
@@ -155,6 +162,9 @@ public class LuceneSearch {
 
 				BooleanQuery.Builder boolQ = new BooleanQuery.Builder();
 
+				System.out.println(query_collection);
+				System.out.println(" ");
+
 				//String queryNo = query_collection.get("query_no");
     			//String description = query_collection.get("description");
 				//System.out.println(queryNo + " " + description);
@@ -177,11 +187,13 @@ public class LuceneSearch {
 
 				String d = query_collection.get("description");
 				String escapedDescription = queryParser.escape(d);
-				Query queryDescription = queryParser.parse(escapedDescription);
+
+        Query queryDescription = queryParser.parse(escapedDescription);
 				boolQ.add(new BoostQuery(queryDescription, 5f), BooleanClause.Occur.SHOULD);
 
 				String n = query_collection.get("narrative");
-				String escapedNarrative = queryParser.escape(n);
+				
+        String escapedNarrative = queryParser.escape(n);
 				Query queryNarrative = queryParser.parse(escapedNarrative);
 				boolQ.add(new BoostQuery(queryNarrative, 3f), BooleanClause.Occur.SHOULD);
 
@@ -192,6 +204,7 @@ public class LuceneSearch {
 				}
 				ScoreDoc[] hits = isearcher.search(boolQ.build(), 1000).scoreDocs;
 				// ScoreDoc[] hits = isearcher.search(query, 1000).scoreDocs;
+
 				for(int j=0;j<hits.length;j++)
 				{
 					Document hitDoc = isearcher.doc(hits[j].doc);
