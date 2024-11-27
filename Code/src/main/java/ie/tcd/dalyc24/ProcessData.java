@@ -30,7 +30,7 @@ public class ProcessData
     
     // Directories
     private static String DATA_DIRECTORY = "../Data/";
-    private static String QUERY_DIRECTORY = "../topics";
+    private static String QUERY_DIRECTORY = "../topics_f";
     public static ArrayList<Document> readFiles_Dataset_File(String filePath) {
         ArrayList<Document> documents = new ArrayList<>();
 

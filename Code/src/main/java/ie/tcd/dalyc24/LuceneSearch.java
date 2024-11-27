@@ -18,8 +18,12 @@ import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.queries.mlt.MoreLikeThisQuery;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.PhraseQuery;
@@ -55,15 +59,38 @@ import org.apache.lucene.search.similarities.NormalizationH1;
 // Axiomatic Similarity
 import org.apache.lucene.search.similarities.AxiomaticF2LOG;
 
+import static org.apache.lucene.analysis.en.EnglishAnalyzer.ENGLISH_STOP_WORDS_SET;
 
 public class LuceneSearch {
 	public static void main(String[] args) throws IOException {
         	ProcessData readFile = new ProcessData();
         	List<Map<String, String>> queryList = readFile.readQueries();
+
+			QueryExpander queryExpander = new QueryExpander();
+			// FOR TESTING
+			// String formatted = queryExpander.formatForExpansion(queryList.get(0));  
+			// queryExpander.expandSingleQuery(formatted);
+			List<Map<String, String>> expandedQueryList = queryExpander.expandQueries(queryList);
+
         	LuceneSearch searcher = new LuceneSearch();
-		System.out.println(args[0] + " " + args[1]);
-        	searcher.searchQueriesInData(args[0], args[1],queryList);
+			System.out.println(args[0] + " " + args[1]);
+        	searcher.searchQueriesInData(args[0], args[1], expandedQueryList);
     	}
+
+	private static ArrayList<Query> moreLikeThis(IndexSearcher isearcher, Analyzer analyzer, DirectoryReader ireader,
+                                                Query query) throws IOException {
+        ArrayList<Query> similarQueries = new ArrayList<>();
+        ScoreDoc[] hits = isearcher.search(query, 12).scoreDocs;
+        for (ScoreDoc hit : hits) {
+            Document hitDoc = ireader.document(hit.doc);
+            String field = hitDoc.getField("text").stringValue();
+            MoreLikeThisQuery similarity = new MoreLikeThisQuery(field, new String[]{"text"}, analyzer, "text");
+            Query similarQuery = similarity.rewrite(ireader);
+            similarQueries.add(similarQuery);
+        }
+        return similarQueries;
+	}
+	
 	public static void searchQueriesInData(String analyzer_name, String similarity_strat,List<Map<String,String>> queryList)
 	{
 		try{
@@ -84,11 +111,14 @@ public class LuceneSearch {
                         		analyzer = new SimpleAnalyzer();
                         		break;
                 		case "stop":
-                        		analyzer = new StopAnalyzer();
+                        		analyzer = new StopAnalyzer(ENGLISH_STOP_WORDS_SET);
                         		break;
                 		case "english":
                         		analyzer = new EnglishAnalyzer();
                         		break;
+						case "custom":
+								analyzer = new CustomAnalyzer();
+								break;
                 		default:
                         		analyzer = new StandardAnalyzer();
                         		break;
@@ -129,20 +159,52 @@ public class LuceneSearch {
 			for(int i=0;i<queries_to_consider;i++)
 			{
 				Map<String,String> query_collection = queryList.get(i);
+
+				BooleanQuery.Builder boolQ = new BooleanQuery.Builder();
+
+				System.out.println(query_collection);
+				System.out.println(" ");
+
 				//String queryNo = query_collection.get("query_no");
     			//String description = query_collection.get("description");
 				//System.out.println(queryNo + " " + description);
+				HashMap<String, Float> boostHashMap = new HashMap<String, Float>();
+				boostHashMap.put("headline", 0.08f);
+				boostHashMap.put("text", 0.92f);
 				MultiFieldQueryParser queryParser = new MultiFieldQueryParser(
                         	//new String[]{"title","narrative", "description"},
 							new String[]{"headline","text","byLine"},
-                        	analyzer);
+                        	analyzer, boostHashMap);
+				String t = query_collection.get("title");
+				String escapedTitle = queryParser.escape(t);
+				Query queryTitle = queryParser.parse(escapedTitle);
+				boolQ.add(new BoostQuery(queryTitle, 4f), BooleanClause.Occur.SHOULD);
+
 				//only using description + narrative for start
+								// String n = query_collection.get("narrative");
+				// String escapedNarrative = queryParser.escape(n);
+				// Query query = queryParser.parse(escapedDescription + " " + escapedNarrative);
+
 				String d = query_collection.get("description");
 				String escapedDescription = queryParser.escape(d);
+
+        Query queryDescription = queryParser.parse(escapedDescription);
+				boolQ.add(new BoostQuery(queryDescription, 5f), BooleanClause.Occur.SHOULD);
+
 				String n = query_collection.get("narrative");
-				String escapedNarrative = queryParser.escape(n);
-				Query query = queryParser.parse(escapedDescription + " " + escapedNarrative);
-				ScoreDoc[] hits = isearcher.search(query, 1000).scoreDocs;
+				
+        String escapedNarrative = queryParser.escape(n);
+				Query queryNarrative = queryParser.parse(escapedNarrative);
+				boolQ.add(new BoostQuery(queryNarrative, 3f), BooleanClause.Occur.SHOULD);
+
+				ArrayList<Query> moreLikeThisQueries = moreLikeThis(isearcher, analyzer, ireader, boolQ.build());
+				// System.out.println(moreLikeThisQueries.get(0));
+				for (Query mlt : moreLikeThisQueries) {
+					boolQ.add(mlt, BooleanClause.Occur.SHOULD);
+				}
+				ScoreDoc[] hits = isearcher.search(boolQ.build(), 1000).scoreDocs;
+				// ScoreDoc[] hits = isearcher.search(query, 1000).scoreDocs;
+
 				for(int j=0;j<hits.length;j++)
 				{
 					Document hitDoc = isearcher.doc(hits[j].doc);
